@@ -1,18 +1,45 @@
+
 # PMPH Roadmap
 
-## Completed
+## Version 0.1.x
+- [x] Project structure created
+- [x] Configuration management
+- [x] SQLite connection
+- [x] Git repository initialized
+- [x] GitHub integration
+- [x] Project documentation
 
--   Phase 1: Project Foundation ✅
--   Phase 2: Git & GitHub Integration ✅
+---
 
-## Current
+## Version 0.2.0 (Current Sprint)
+- [ ] DatabaseManager
+- [ ] Automatic database initialization
+- [ ] Holdings table
+- [ ] Transactions table
+- [ ] SIP Master table
+- [ ] Watchlist table
+- [ ] Fund Master table
+- [ ] ETF Master table
+- [ ] Application Settings table
 
--   Phase 3: Database Manager (In Progress)
+---
 
-## Upcoming
+## Future Versions
 
--   Phase 4: Portfolio Import
--   Phase 5: Dashboard
--   Phase 6: Portfolio Health
--   Phase 7: Analytics
--   Phase 8: AI Recommendation Engine
+### v0.3
+- Portfolio Import
+
+### v0.4
+- Dashboard
+
+### v0.5
+- Portfolio Health Engine
+
+### v0.6
+- Analytics
+
+### v0.7
+- AI Recommendation Engine
+
+### v1.0
+- Stable Release
