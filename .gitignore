@@ -1,4 +1,46 @@
+# =========================================================
+# PMPH - Git Ignore
+# =========================================================
+
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Virtual environment
 .venv/
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# =========================================================
+# PRIVATE PORTFOLIO / BROKER DATA
+# =========================================================
+
+# Never commit real holdings/import files
+data/*.xlsx
+data/*.xls
+data/*.csv
+
+# Temporary/import files
+*.tmp
+~$*.xlsx
+~$*.xls
+
+# Environment / secrets
+.env
+.env.*
+*.key
+*.pem
+# Local AI / agent workspace files
 .agents/
