@@ -6,6 +6,12 @@ import streamlit as st
 
 from services.holdings_validator import HoldingsValidator
 from services.universal_holdings_reader import UniversalHoldingsReader
+from services.portfolio_import_service import PortfolioImportService
+from services.portfolio_batch_import_service import PortfolioBatchImportService, BatchImportItem
+
+from ui.import_account_assignment import (
+    show_account_assignment,
+)
 
 
 # =========================================================
@@ -174,32 +180,25 @@ def show():
             "No files have been added yet."
         )
 
-        st.write(
-            "Browse for a file above, click "
-            "**Add File**, then repeat for any "
-            "additional holdings files."
-        )
-
         return
 
     st.write(
-        f"Files currently added: "
+        f"Files currently in basket: "
         f"**{len(basket)}**"
     )
 
-    # -----------------------------------------------------
-    # Display files in basket
-    # -----------------------------------------------------
+    file_keys = list(
+        basket.keys()
+    )
 
-    for index, (
-        file_key,
-        file_data,
-    ) in enumerate(
-        list(
-            basket.items()
-        ),
+    for index, file_key in enumerate(
+        file_keys,
         start=1,
     ):
+
+        file_data = basket[
+            file_key
+        ]
 
         file_col, size_col, remove_col = (
             st.columns(
@@ -220,27 +219,23 @@ def show():
 
         with size_col:
 
-            size_kb = (
-                file_data[
-                    "size"
-                ]
-                / 1024
-            )
-
             st.write(
-                f"{size_kb:,.1f} KB"
+                f"{file_data['size']:,} bytes"
             )
 
         with remove_col:
 
-            if st.button(
+            remove_clicked = st.button(
                 "Remove",
                 key=(
-                    f"remove_holding_file_"
+                    f"remove_"
                     f"{index}_"
-                    f"{file_data['name']}"
+                    f"{file_data['size']}"
                 ),
-            ):
+                use_container_width=True,
+            )
+
+            if remove_clicked:
 
                 remove_file_from_basket(
                     file_key
@@ -248,9 +243,7 @@ def show():
 
                 st.rerun()
 
-    # =====================================================
-    # BASKET CONTROLS
-    # =====================================================
+    st.markdown("")
 
     analyze_col, clear_col = st.columns(
         [
@@ -269,10 +262,12 @@ def show():
 
     with clear_col:
 
-        if st.button(
-            "Clear All",
+        clear_clicked = st.button(
+            "Clear Basket",
             use_container_width=True,
-        ):
+        )
+
+        if clear_clicked:
 
             clear_file_basket()
 
@@ -321,7 +316,7 @@ def show():
 
         with st.spinner(
             f"Analyzing {len(basket)} "
-            "holdings file(s)..."
+            "holdings file(s)."
         ):
 
             for (
@@ -336,6 +331,9 @@ def show():
                 )
 
                 file_result = {
+                    "file_key":
+                        file_key,
+
                     "file_name":
                         file_name,
 
@@ -518,6 +516,9 @@ def show():
 
                         all_validation_results.append(
                             {
+                                "file_key":
+                                    file_key,
+
                                 "source_file":
                                     file_name,
 
@@ -1027,7 +1028,7 @@ def show():
         # DUPLICATE SECURITY AWARENESS
         # =================================================
 
-        valid_rows = []
+        valid_preview_rows = []
 
         for item in valid_results:
 
@@ -1037,72 +1038,74 @@ def show():
                 ].holding
             )
 
-            isin = str(
+            isin = (
                 holding.isin
                 or ""
-            ).strip()
+            ).strip().upper()
 
-            symbol = str(
+            symbol = (
                 holding.symbol
                 or ""
-            ).strip()
+            ).strip().upper()
 
-            security_key = (
-                f"ISIN:{isin}"
-                if isin
-                else f"SYMBOL:{symbol}"
-            )
+            if isin:
 
-            valid_rows.append(
+                security_key = (
+                    f"ISIN:{isin}"
+                )
+
+            else:
+
+                security_key = (
+                    f"SYMBOL:{symbol}"
+                )
+
+            valid_preview_rows.append(
                 {
-                    "Security Key":
-                        security_key,
-
                     "Source File":
                         item[
                             "source_file"
                         ],
 
                     "Symbol":
-                        symbol,
+                        holding.symbol,
 
                     "ISIN":
-                        isin,
+                        holding.isin,
 
-                    "Quantity":
-                        holding.quantity,
-
-                    "Invested Value":
-                        holding.invested_value,
-
-                    "Current Value":
-                        holding.current_value,
+                    "Security Key":
+                        security_key,
                 }
             )
 
         duplicate_df = pd.DataFrame(
-            valid_rows
+            valid_preview_rows
         )
 
         if not duplicate_df.empty:
 
+            duplicate_mask = (
+                duplicate_df.duplicated(
+                    subset=[
+                        "Security Key"
+                    ],
+                    keep=False,
+                )
+            )
+
             duplicate_rows = (
                 duplicate_df[
-                    duplicate_df.duplicated(
-                        "Security Key",
-                        keep=False
-                    )
+                    duplicate_mask
                 ]
             )
 
             if not duplicate_rows.empty:
 
                 st.warning(
-                    "The same security appears in "
-                    "multiple source rows/files. "
-                    "PMPH has kept them separate "
-                    "to prevent accidental merging "
-                    "of different accounts or owners."
+                    "The same security appears in more "
+                    "than one uploaded file. PMPH has kept "
+                    "them separate to prevent accidental "
+                    "merging of different accounts or owners."
                 )
 
                 st.dataframe(
@@ -1152,7 +1155,7 @@ def show():
                         )
 
         # =================================================
-        # FINAL STATUS
+        # FINAL VALIDATION STATUS
         # =================================================
 
         st.markdown("---")
@@ -1187,21 +1190,1020 @@ def show():
             )
 
         # =================================================
-        # DATABASE IMPORT
+        # ACCOUNT ASSIGNMENT + DATABASE IMPORT
         # =================================================
 
-        st.button(
-            "Import Validated Holdings",
-            disabled=True,
-            use_container_width=True,
+        st.markdown("---")
+
+        st.markdown(
+            "### 7. Assign Files to Portfolio Accounts"
         )
 
-        st.caption(
-            "Database import remains disabled for now. "
-            "This sprint verifies persistent multi-file "
-            "collection, universal extraction, validation, "
-            "and combined portfolio preview."
+        st.write(
+            "Assign each successfully analyzed holdings file "
+            "to the correct owner, platform/broker, and account."
         )
+
+        st.info(
+            "Each file is assigned independently. "
+            "This prevents holdings belonging to different "
+            "family members or broker accounts from being "
+            "accidentally merged."
+        )
+
+        import_service = (
+            PortfolioImportService(
+                "data/pmph_portfolio.db"
+            )
+        )
+
+        # -------------------------------------------------
+        # Group validation results by original basket file
+        # -------------------------------------------------
+
+        validations_by_file = {}
+
+        for item in all_validation_results:
+
+            item_file_key = (
+                item[
+                    "file_key"
+                ]
+            )
+
+            if (
+                item_file_key
+                not in validations_by_file
+            ):
+
+                validations_by_file[
+                    item_file_key
+                ] = []
+
+            validations_by_file[
+                item_file_key
+            ].append(
+                item[
+                    "validation"
+                ]
+            )
+
+        assignment_results = {}
+
+        importable_files = []
+
+        # -------------------------------------------------
+        # Show assignment controls
+        # -------------------------------------------------
+
+        for index, (
+            file_key,
+            file_data,
+        ) in enumerate(
+            basket.items(),
+            start=1,
+        ):
+
+            file_validations = (
+                validations_by_file.get(
+                    file_key,
+                    []
+                )
+            )
+
+            valid_file_holdings = [
+                result
+                for result
+                in file_validations
+                if result.is_valid
+            ]
+
+            if not valid_file_holdings:
+
+                continue
+
+            importable_files.append(
+                file_key
+            )
+
+            st.markdown("---")
+
+            st.markdown(
+                f"#### File {index}: "
+                f"{file_data['name']}"
+            )
+
+            st.write(
+                f"Validated holdings ready: "
+                f"**{len(valid_file_holdings)}**"
+            )
+
+            # Internal identity is unique even if two
+            # uploaded files have the same visible filename.
+
+            assignment_identity = (
+                f"{file_data['name']}"
+                f"__{file_data['size']}"
+                f"__{index}"
+            )
+
+            assignment = (
+                show_account_assignment(
+                    file_name=(
+                        assignment_identity
+                    ),
+                    import_service=(
+                        import_service
+                    ),
+                )
+            )
+
+            assignment_results[
+                file_key
+            ] = assignment
+
+        # -------------------------------------------------
+        # Check all assignments
+        # -------------------------------------------------
+
+        all_files_assigned = (
+            bool(
+                importable_files
+            )
+            and all(
+                assignment_results.get(
+                    file_key,
+                    {}
+                ).get(
+                    "ready",
+                    False
+                )
+                for file_key
+                in importable_files
+            )
+        )
+
+        # =================================================
+        # FINAL IMPORT CONFIRMATION + IMPACT PREVIEW
+        # =================================================
+
+        st.markdown("---")
+
+        st.markdown(
+            "### 8. Pre-Import Impact & Final Confirmation"
+        )
+
+        if not all_files_assigned:
+
+            st.warning(
+                "Assign every importable file to a "
+                "portfolio account before continuing."
+            )
+
+        else:
+
+            # =============================================
+            # SAFETY CHECK:
+            # MORE THAN ONE FULL FILE FOR SAME ACCOUNT
+            # =============================================
+
+            full_account_files = {}
+
+            for file_key in importable_files:
+
+                assignment = (
+                    assignment_results[
+                        file_key
+                    ]
+                )
+
+                account = (
+                    assignment[
+                        "account"
+                    ]
+                )
+
+                mode = (
+                    assignment[
+                        "mode"
+                    ]
+                )
+
+                if mode != "FULL":
+                    continue
+
+                account_id = (
+                    account.account_id
+                )
+
+                if (
+                    account_id
+                    not in full_account_files
+                ):
+
+                    full_account_files[
+                        account_id
+                    ] = []
+
+                full_account_files[
+                    account_id
+                ].append(
+                    basket[
+                        file_key
+                    ][
+                        "name"
+                    ]
+                )
+
+            duplicate_full_accounts = {
+                account_id:
+                    file_names
+
+                for (
+                    account_id,
+                    file_names,
+                ) in (
+                    full_account_files.items()
+                )
+
+                if len(
+                    file_names
+                ) > 1
+            }
+
+            configuration_safe = (
+                not duplicate_full_accounts
+            )
+
+            if not configuration_safe:
+
+                st.error(
+                    "Unsafe FULL-statement configuration "
+                    "detected."
+                )
+
+                st.write(
+                    "More than one FULL statement has been "
+                    "assigned to the same portfolio account. "
+                    "PMPH will not allow this because one "
+                    "FULL statement could remove holdings "
+                    "contained in another file."
+                )
+
+                for (
+                    account_id,
+                    file_names,
+                ) in (
+                    duplicate_full_accounts.items()
+                ):
+
+                    account_name = (
+                        account_id
+                    )
+
+                    for file_key in (
+                        importable_files
+                    ):
+
+                        assignment = (
+                            assignment_results[
+                                file_key
+                            ]
+                        )
+
+                        account = (
+                            assignment[
+                                "account"
+                            ]
+                        )
+
+                        if (
+                            account.account_id
+                            == account_id
+                        ):
+
+                            account_name = (
+                                account
+                                .display_name()
+                            )
+
+                            break
+
+                    st.markdown(
+                        f"**{account_name}**"
+                    )
+
+                    for file_name in (
+                        file_names
+                    ):
+
+                        st.write(
+                            f"- {file_name}"
+                        )
+
+                st.warning(
+                    "Change one or more of these files "
+                    "to PARTIAL, or assign them to the "
+                    "correct separate accounts."
+                )
+
+            # =============================================
+            # READ-ONLY IMPACT PREVIEW
+            # =============================================
+
+            preview_results = {}
+
+            preview_rows = []
+
+            removal_rows = []
+
+            addition_rows = []
+
+            update_rows = []
+
+            preview_failed = False
+
+            if configuration_safe:
+
+                for file_key in (
+                    importable_files
+                ):
+
+                    file_data = (
+                        basket[
+                            file_key
+                        ]
+                    )
+
+                    assignment = (
+                        assignment_results[
+                            file_key
+                        ]
+                    )
+
+                    account = (
+                        assignment[
+                            "account"
+                        ]
+                    )
+
+                    mode = (
+                        assignment[
+                            "mode"
+                        ]
+                    )
+
+                    file_validations = (
+                        validations_by_file.get(
+                            file_key,
+                            []
+                        )
+                    )
+
+                    preview = (
+                        import_service
+                        .preview_validated_holdings(
+                            account=account,
+
+                            validation_results=(
+                                file_validations
+                            ),
+
+                            mode=mode,
+
+                            source_file=(
+                                file_data[
+                                    "name"
+                                ]
+                            ),
+                        )
+                    )
+
+                    preview_results[
+                        file_key
+                    ] = preview
+
+                    if not preview.success:
+
+                        preview_failed = True
+
+                    preview_rows.append(
+                        {
+                            "Source File":
+                                file_data[
+                                    "name"
+                                ],
+
+                            "Portfolio Account":
+                                (
+                                    account
+                                    .display_name()
+                                ),
+
+                            "Mode":
+                                mode,
+
+                            "Incoming":
+                                (
+                                    preview
+                                    .incoming_count
+                                ),
+
+                            "Added":
+                                (
+                                    preview
+                                    .added_count
+                                ),
+
+                            "Updated":
+                                (
+                                    preview
+                                    .updated_count
+                                ),
+
+                            "Removed":
+                                (
+                                    preview
+                                    .removed_count
+                                ),
+
+                            "Unchanged":
+                                (
+                                    preview
+                                    .unchanged_count
+                                ),
+
+                            "Preview":
+                                (
+                                    "READY"
+                                    if preview.success
+                                    else "FAILED"
+                                ),
+                        }
+                    )
+
+                    # -------------------------------------
+                    # Exact additions
+                    # -------------------------------------
+
+                    for impact in (
+                        preview.added
+                    ):
+
+                        addition_rows.append(
+                            {
+                                "Source File":
+                                    file_data[
+                                        "name"
+                                    ],
+
+                                "Account":
+                                    (
+                                        account
+                                        .display_name()
+                                    ),
+
+                                "Symbol":
+                                    impact.symbol,
+
+                                "ISIN":
+                                    impact.isin,
+
+                                "New Quantity":
+                                    (
+                                        impact
+                                        .new_quantity
+                                    ),
+                            }
+                        )
+
+                    # -------------------------------------
+                    # Exact updates
+                    # -------------------------------------
+
+                    for impact in (
+                        preview.updated
+                    ):
+
+                        update_rows.append(
+                            {
+                                "Source File":
+                                    file_data[
+                                        "name"
+                                    ],
+
+                                "Account":
+                                    (
+                                        account
+                                        .display_name()
+                                    ),
+
+                                "Symbol":
+                                    impact.symbol,
+
+                                "ISIN":
+                                    impact.isin,
+
+                                "Old Quantity":
+                                    (
+                                        impact
+                                        .old_quantity
+                                    ),
+
+                                "New Quantity":
+                                    (
+                                        impact
+                                        .new_quantity
+                                    ),
+                            }
+                        )
+
+                    # -------------------------------------
+                    # Exact removals
+                    # -------------------------------------
+
+                    for impact in (
+                        preview.removed
+                    ):
+
+                        removal_rows.append(
+                            {
+                                "Source File":
+                                    file_data[
+                                        "name"
+                                    ],
+
+                                "Account":
+                                    (
+                                        account
+                                        .display_name()
+                                    ),
+
+                                "Symbol":
+                                    impact.symbol,
+
+                                "ISIN":
+                                    impact.isin,
+
+                                "Current Quantity":
+                                    (
+                                        impact
+                                        .old_quantity
+                                    ),
+                            }
+                        )
+
+                # =========================================
+                # IMPACT SUMMARY
+                # =========================================
+
+                st.markdown(
+                    "#### Read-Only Import Impact"
+                )
+
+                st.caption(
+                    "Nothing has been written to the "
+                    "portfolio database by this preview."
+                )
+
+                st.dataframe(
+                    pd.DataFrame(
+                        preview_rows
+                    ),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+
+                total_preview_added = sum(
+                    row[
+                        "Added"
+                    ]
+                    for row
+                    in preview_rows
+                )
+
+                total_preview_updated = sum(
+                    row[
+                        "Updated"
+                    ]
+                    for row
+                    in preview_rows
+                )
+
+                total_preview_removed = sum(
+                    row[
+                        "Removed"
+                    ]
+                    for row
+                    in preview_rows
+                )
+
+                total_preview_unchanged = sum(
+                    row[
+                        "Unchanged"
+                    ]
+                    for row
+                    in preview_rows
+                )
+
+                (
+                    preview_add_col,
+                    preview_update_col,
+                    preview_remove_col,
+                    preview_unchanged_col,
+                ) = st.columns(4)
+
+                preview_add_col.metric(
+                    "Will Add",
+                    total_preview_added,
+                )
+
+                preview_update_col.metric(
+                    "Will Update",
+                    total_preview_updated,
+                )
+
+                preview_remove_col.metric(
+                    "Will Remove",
+                    total_preview_removed,
+                )
+
+                preview_unchanged_col.metric(
+                    "Unchanged",
+                    total_preview_unchanged,
+                )
+
+                # =========================================
+                # EXACT ADDITIONS
+                # =========================================
+
+                if addition_rows:
+
+                    with st.expander(
+                        "View Holdings That Will Be Added"
+                    ):
+
+                        st.dataframe(
+                            pd.DataFrame(
+                                addition_rows
+                            ),
+                            use_container_width=True,
+                            hide_index=True,
+                        )
+
+                # =========================================
+                # EXACT UPDATES
+                # =========================================
+
+                if update_rows:
+
+                    with st.expander(
+                        "View Holdings That Will Be Updated"
+                    ):
+
+                        st.dataframe(
+                            pd.DataFrame(
+                                update_rows
+                            ),
+                            use_container_width=True,
+                            hide_index=True,
+                        )
+
+                # =========================================
+                # EXACT REMOVALS
+                # =========================================
+
+                if removal_rows:
+
+                    st.error(
+                        "FULL synchronization will remove "
+                        "the holdings shown below from the "
+                        "current PMPH portfolio database."
+                    )
+
+                    st.dataframe(
+                        pd.DataFrame(
+                            removal_rows
+                        ),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+
+                else:
+
+                    st.success(
+                        "The current preview contains no "
+                        "holding removals."
+                    )
+
+                # =========================================
+                # PREVIEW ERRORS
+                # =========================================
+
+                if preview_failed:
+
+                    st.error(
+                        "One or more import previews failed. "
+                        "Real database import has been blocked."
+                    )
+
+                    for file_key in (
+                        importable_files
+                    ):
+
+                        preview = (
+                            preview_results.get(
+                                file_key
+                            )
+                        )
+
+                        if (
+                            preview is None
+                            or preview.success
+                        ):
+
+                            continue
+
+                        file_name = (
+                            basket[
+                                file_key
+                            ][
+                                "name"
+                            ]
+                        )
+
+                        st.markdown(
+                            f"**{file_name}**"
+                        )
+
+                        for error in (
+                            preview.errors
+                        ):
+
+                            st.write(
+                                f"- {error}"
+                            )
+
+            # =============================================
+            # FINAL CONFIRMATION
+            # =============================================
+
+            import_ready = (
+                configuration_safe
+                and not preview_failed
+                and bool(
+                    preview_rows
+                )
+            )
+
+            if import_ready:
+
+                st.markdown("---")
+
+                st.markdown(
+                    "#### Final Authorization"
+                )
+
+                if removal_rows:
+
+                    st.warning(
+                        "This import includes one or more "
+                        "holding removals. Review the removal "
+                        "table carefully before confirming."
+                    )
+
+                else:
+
+                    st.info(
+                        "The impact preview is ready. "
+                        "Review the account assignments and "
+                        "changes before confirming."
+                    )
+
+                confirm_import = (
+                    st.checkbox(
+                        (
+                            "I have reviewed the pre-import "
+                            "impact and confirm that each file "
+                            "is assigned to the correct account "
+                            "with the correct FULL/PARTIAL mode."
+                        ),
+                        key=(
+                            "confirm_real_holdings_import"
+                        ),
+                    )
+                )
+
+                # Extra confirmation when destructive
+                # FULL removals are present.
+
+                removal_confirmed = True
+
+                if removal_rows:
+
+                    removal_confirmed = (
+                        st.checkbox(
+                            (
+                                "I specifically confirm the "
+                                "holding removal(s) shown above."
+                            ),
+                            key=(
+                                "confirm_holdings_removals"
+                            ),
+                        )
+                    )
+
+                import_clicked = (
+                    st.button(
+                        (
+                            "💾 Confirm & Import "
+                            "Validated Holdings"
+                        ),
+                        type="primary",
+                        disabled=(
+                            not confirm_import
+                            or not removal_confirmed
+                        ),
+                        use_container_width=True,
+                    )
+                )
+
+                # =========================================
+                # PROTECTED REAL DATABASE BATCH IMPORT
+                # =========================================
+
+                if import_clicked:
+
+                    batch_items = []
+
+                    for file_key in importable_files:
+
+                        file_data = basket[file_key]
+                        assignment = assignment_results[file_key]
+
+                        batch_items.append(
+                            BatchImportItem(
+                                source_file=file_data["name"],
+                                account=assignment["account"],
+                                validation_results=validations_by_file.get(
+                                    file_key,
+                                    [],
+                                ),
+                                mode=assignment["mode"],
+                            )
+                        )
+
+                    batch_service = PortfolioBatchImportService(
+                        portfolio_import_service=import_service,
+                        database_path="data/pmph_portfolio.db",
+                        backup_directory="data/backups",
+                    )
+
+                    with st.spinner(
+                        "Creating a verified safety backup "
+                        "and importing the confirmed batch..."
+                    ):
+
+                        batch_result = batch_service.import_batch(
+                            batch_items
+                        )
+
+                    st.markdown("---")
+                    st.markdown("### 9. Protected Import Result")
+
+                    if batch_result.backup_created:
+
+                        st.success(
+                            "Verified pre-import database "
+                            "backup created successfully."
+                        )
+
+                        st.code(batch_result.backup_path)
+
+                    else:
+
+                        st.error(
+                            "No verified pre-import backup "
+                            "was created. Database writes "
+                            "were blocked."
+                        )
+
+                    import_results = []
+
+                    for index, result in enumerate(
+                        batch_result.import_results
+                    ):
+
+                        source_file = (
+                            batch_items[index].source_file
+                            if index < len(batch_items)
+                            else ""
+                        )
+
+                        import_results.append(
+                            {
+                                "File": source_file,
+                                "Account": result.account_display_name,
+                                "Mode": result.mode,
+                                "Success": result.success,
+                                "Incoming": result.incoming_count,
+                                "Added": result.added_count,
+                                "Updated": result.updated_count,
+                                "Removed": result.removed_count,
+                                "Unchanged": result.unchanged_count,
+                                "Errors": "; ".join(result.errors),
+                            }
+                        )
+
+                    if import_results:
+
+                        st.dataframe(
+                            pd.DataFrame(import_results),
+                            width="stretch",
+                            hide_index=True,
+                        )
+
+                    total_added = sum(
+                        row["Added"]
+                        for row in import_results
+                    )
+
+                    total_updated = sum(
+                        row["Updated"]
+                        for row in import_results
+                    )
+
+                    total_removed = sum(
+                        row["Removed"]
+                        for row in import_results
+                    )
+
+                    total_unchanged = sum(
+                        row["Unchanged"]
+                        for row in import_results
+                    )
+
+                    (
+                        added_col,
+                        updated_col,
+                        removed_col,
+                        unchanged_col,
+                    ) = st.columns(4)
+
+                    added_col.metric("Added", total_added)
+                    updated_col.metric("Updated", total_updated)
+                    removed_col.metric("Removed", total_removed)
+                    unchanged_col.metric(
+                        "Unchanged",
+                        total_unchanged,
+                    )
+
+                    st.write(
+                        "Files completed: "
+                        f"**{batch_result.completed_files}"
+                        f"/{batch_result.total_files}**"
+                    )
+
+                    if batch_result.errors:
+
+                        st.error(
+                            "The protected batch did not "
+                            "complete successfully."
+                        )
+
+                        for error in batch_result.errors:
+
+                            st.write(f"- {error}")
+
+                        if batch_result.backup_created:
+
+                            st.warning(
+                                "The verified pre-import backup "
+                                "has been preserved for explicit "
+                                "recovery. PMPH did not "
+                                "automatically restore it."
+                            )
+
+                    elif batch_result.success:
+
+                        st.success(
+                            "The complete confirmed batch was "
+                            "successfully imported into the "
+                            "PMPH portfolio database."
+                        )
+
+                        st.info(
+                            "The backup shown above is the "
+                            "recovery point immediately before "
+                            "this import."
+                        )
+
+                    else:
+
+                        st.error(
+                            "The protected batch import "
+                            "did not complete."
+                        )
 
     finally:
 
@@ -1209,23 +2211,11 @@ def show():
         # CLEAN TEMPORARY FILES
         # =================================================
 
-        for temp_path in (
-            temporary_files
-        ):
+        for temp_path in temporary_files:
 
-            if (
-                temp_path
-                and os.path.exists(
-                    temp_path
-                )
-            ):
+            if temp_path and os.path.exists(temp_path):
 
                 try:
-
-                    os.remove(
-                        temp_path
-                    )
-
+                    os.remove(temp_path)
                 except OSError:
-
                     pass

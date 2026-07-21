@@ -49,3 +49,30 @@ data/*.db
 data/*.db-journal
 data/*.db-shm
 data/*.db-wal
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+
+# PMPH local databases
+data/*.db
+data/**/*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# PMPH database backups and test artifacts
+data/backups/
+data/backup_test/
+data/test_batch_backups/
+
+# Local holding statements / portfolio data
+data/*.xlsx
+data/*.xls
+data/*.csv
+
+# Temporary files
+*.tmp
+~$*
