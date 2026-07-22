@@ -1,4 +1,4 @@
-# PMPH Development Log
+﻿# PMPH Development Log
 
 ## Project
 
@@ -202,22 +202,83 @@ No regression detected in the Sprint 0.6.0 protected persistence foundation.
 
 ---
 
-## Exact Continuation Point
+## Sprint 0.7.2 - Persistent Database / Portfolio UI
 
-Completed Sprint:
-0.7.1 - Portfolio Read Service
+Status: COMPLETED
 
-Next Sprint:
+### Implementation
 
-Sprint 0.7.2 - Persistent Database / Portfolio UI
+- Added dedicated Portfolio sidebar navigation
+- Added Portfolio routing in app.py
+- Added ui/portfolio_view.py
+- Connected the UI to PortfolioReadService
+- Added persistent portfolio summary metrics
+- Added consolidated holdings presentation
+- Added account-wise holdings presentation
+- Added shared numeric and currency formatting
+- Corrected rupee symbol UTF-8 presentation
+- Preserved a read-only portfolio UI boundary
+- Added tests/test_portfolio_view.py render smoke test
 
-Primary objective:
+### Live UI Verification
 
-Connect PortfolioReadService to the application UI and expose the persisted
-portfolio through account-wise, consolidated, and summary views.
+Verified against:
+
+data/pmph_portfolio.db
+
+Verified result:
+
+- Accounts: 2
+- Holdings: 4
+- Invested value: approximately 474,803.77
+- Current value: approximately 504,034.60
+- Profit: approximately 29,230.83
+- Portfolio return: approximately 6.16%
+
+Verified consolidated securities:
+
+- GOLDBEES
+- HDFCSML250
+- MIDCAP
+- SMALLCAP
+
+Verified account-wise presentation:
+
+- Anita / Zerodha: 3 holdings
+- Jaideep / ProStocks: 1 holding
+
+### Regression Verification
+
+PASS:
+
+- Portfolio Database
+- Holdings Database
+- Portfolio Import Service
+- Protected Portfolio Batch Import
+- Portfolio UI render smoke test
+
+No regression detected in the protected portfolio persistence/import foundation.
 
 ---
 
+## Exact Continuation Point
+
+Completed Sprint:
+
+0.7.2 - Persistent Database / Portfolio UI
+
+Next Sprint:
+
+Sprint 0.8.1 - Portfolio Dashboard Foundation
+
+Primary objective:
+
+Replace the placeholder Dashboard with a persisted portfolio overview using
+PortfolioReadService, including core valuation metrics, allocation views,
+account-wise allocation, and portfolio composition visualization without
+prematurely introducing the later market-data architecture.
+
+---
 ## Development Continuity Rule
 
 Future PMPH sessions must begin by checking:

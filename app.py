@@ -1,10 +1,11 @@
-import streamlit as st
+﻿import streamlit as st
 
 from config import APP_NAME, APP_FULL_NAME, VERSION
 from core.database import DatabaseManager
 from core.navigation import Navigation
 
 from ui import dashboard
+from ui import portfolio_view
 from ui import import_holdings
 from ui import database_view
 
@@ -15,7 +16,7 @@ from ui import database_view
 st.set_page_config(
     page_title=APP_NAME,
     page_icon="📊",
-    layout="wide"
+    layout="wide",
 )
 
 # ---------------------------------------------------------
@@ -42,6 +43,9 @@ st.markdown("---")
 # ---------------------------------------------------------
 if page == "Dashboard":
     dashboard.show()
+
+elif page == "Portfolio":
+    portfolio_view.show()
 
 elif page == "Import Holdings":
     import_holdings.show()

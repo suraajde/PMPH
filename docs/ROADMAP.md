@@ -1,4 +1,4 @@
-# PMPH Development Roadmap
+﻿# PMPH Development Roadmap
 
 ## Project
 PMPH - Portfolio Manager & Portfolio Health
@@ -110,22 +110,53 @@ Verified during development:
 
 ---
 
-## Next Sprint
+## Completed Persistent UI
 
 ### Sprint 0.7.2 - Persistent Database / Portfolio UI
+Status: COMPLETED
 
-Planned objectives:
+Objectives completed:
 
-- Connect PortfolioReadService to the application UI
-- Display persistent portfolio data from SQLite
-- Account-wise portfolio view
-- Consolidated portfolio view
-- Portfolio summary metrics
-- Clear account/platform ownership visibility
-- Read-only UI foundation before portfolio editing features
+- Connected PortfolioReadService to the application UI
+- Added dedicated Portfolio navigation and page routing
+- Displayed persistent portfolio data from SQLite
+- Added portfolio summary metrics
+- Added consolidated holdings view
+- Added account-wise holdings view
+- Preserved account/platform ownership visibility
+- Added numeric and currency presentation formatting
+- Maintained a read-only UI boundary over the persistence layer
+- Added Portfolio UI render smoke-test coverage
+
+Verified during development:
+
+- Portfolio page rendered successfully in Streamlit
+- Live summary matched persisted database values
+- Consolidated view displayed 4 securities
+- Anita / Zerodha displayed 3 holdings
+- Jaideep / ProStocks displayed 1 holding
+- Rupee currency encoding corrected and verified
+- Relevant persistence/import regression tests passed
+- Live baseline remained 2 accounts / 4 holdings
 
 ---
 
+## Next Sprint
+
+### Sprint 0.8.1 - Portfolio Dashboard Foundation
+
+Planned objectives:
+
+- Replace the placeholder Dashboard with persisted portfolio overview data
+- Reuse PortfolioReadService as the dashboard read boundary
+- Display core portfolio valuation metrics
+- Add asset/category allocation view from available persisted data
+- Add account-wise portfolio allocation view
+- Add portfolio composition visualization
+- Preserve consolidated and account ownership boundaries
+- Establish the dashboard foundation without prematurely introducing the later market-data architecture
+
+---
 ## Planned Roadmap Toward v1.0
 
 ### Phase 0.8.x - Portfolio Dashboard and Valuation
