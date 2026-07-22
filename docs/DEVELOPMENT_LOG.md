@@ -261,22 +261,90 @@ No regression detected in the protected portfolio persistence/import foundation.
 
 ---
 
+## Sprint 0.8.1 - Portfolio Dashboard Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Replaced the placeholder Dashboard with a persisted portfolio dashboard
+- Reused PortfolioReadService as the dashboard read boundary
+- Added current value, invested value, profit/loss, and portfolio return metrics
+- Added account, holding, and consolidated-security summary metrics
+- Added security-wise portfolio composition
+- Added account-wise portfolio allocation
+- Added asset-type summary from persisted holding metadata
+- Added Altair security-allocation visualization
+- Preserved read-only separation from persistence/import logic
+- Added tests/test_dashboard.py Dashboard render smoke test
+
+### Live Dashboard Verification
+
+Verified against:
+
+data/pmph_portfolio.db
+
+Verified result:
+
+- Accounts: 2
+- Holdings: 4
+- Consolidated securities: 4
+- Invested value: approximately 474,803.77
+- Current value: approximately 504,034.60
+- Profit: approximately 29,230.83
+- Portfolio return: approximately 6.16%
+
+Verified reconciliation:
+
+- Portfolio summary current value: 504,034.60
+- Consolidated security total: 504,034.60
+- Account-wise total: 504,034.60
+- Security allocation total: 100 percent
+- Account allocation total: 100 percent
+
+Verified security allocation:
+
+- SMALLCAP: approximately 53.48 percent
+- MIDCAP: approximately 30.16 percent
+- GOLDBEES: approximately 11.63 percent
+- HDFCSML250: approximately 4.73 percent
+
+Current persisted asset-type metadata:
+
+- ETF: 100 percent
+
+### Regression Verification
+
+PASS:
+
+- Portfolio Database
+- Holdings Database
+- Portfolio Import Service
+- Protected Portfolio Batch Import
+- Portfolio Read Service
+- Portfolio UI render smoke test
+- Dashboard UI render smoke test
+
+No regression detected in the protected persistence, read, or persistent UI foundation.
+
+---
+
 ## Exact Continuation Point
 
 Completed Sprint:
 
-0.7.2 - Persistent Database / Portfolio UI
+0.8.1 - Portfolio Dashboard Foundation
 
 Next Sprint:
 
-Sprint 0.8.1 - Portfolio Dashboard Foundation
+Sprint 0.8.2 - Dashboard Valuation and Data Freshness Foundation
 
 Primary objective:
 
-Replace the placeholder Dashboard with a persisted portfolio overview using
-PortfolioReadService, including core valuation metrics, allocation views,
-account-wise allocation, and portfolio composition visualization without
-prematurely introducing the later market-data architecture.
+Establish valuation-status and data-freshness visibility using persisted
+portfolio information, including stale or missing valuation detection and
+dashboard-level valuation coverage, while keeping external market-data
+fetching deferred to the planned Phase 0.10.x architecture.
 
 ---
 ## Development Continuity Rule

@@ -141,20 +141,51 @@ Verified during development:
 
 ---
 
-## Next Sprint
+## Completed Dashboard Foundation
 
 ### Sprint 0.8.1 - Portfolio Dashboard Foundation
+Status: COMPLETED
+
+Objectives completed:
+
+- Replaced the placeholder Dashboard with persisted portfolio overview data
+- Reused PortfolioReadService as the dashboard read boundary
+- Added core portfolio valuation metrics
+- Added account, holding, and consolidated-security summary metrics
+- Added security-wise portfolio composition
+- Added account-wise portfolio allocation
+- Added asset-type summary from persisted holding metadata
+- Added security allocation visualization
+- Preserved consolidated and account ownership boundaries
+- Avoided premature dependency on external market-data architecture
+- Added Dashboard UI render smoke-test coverage
+
+Verified during development:
+
+- Dashboard rendered successfully in Streamlit
+- Portfolio current value reconciled to 504,034.60
+- Consolidated security total reconciled to 504,034.60
+- Account-wise total reconciled to 504,034.60
+- Security allocation reconciled to 100 percent
+- Account allocation reconciled to 100 percent
+- Live baseline remained 2 accounts / 4 holdings / 4 consolidated securities
+- Relevant persistence, read, and UI regression tests passed
+
+---
+
+## Next Sprint
+
+### Sprint 0.8.2 - Dashboard Valuation and Data Freshness Foundation
 
 Planned objectives:
 
-- Replace the placeholder Dashboard with persisted portfolio overview data
-- Reuse PortfolioReadService as the dashboard read boundary
-- Display core portfolio valuation metrics
-- Add asset/category allocation view from available persisted data
-- Add account-wise portfolio allocation view
-- Add portfolio composition visualization
-- Preserve consolidated and account ownership boundaries
-- Establish the dashboard foundation without prematurely introducing the later market-data architecture
+- Establish valuation-status visibility from persisted portfolio data
+- Surface available holding valuation/update timestamps
+- Detect stale or missing valuation information
+- Add dashboard-level valuation coverage and freshness status
+- Preserve PortfolioReadService as the dashboard read boundary
+- Keep external market-data fetching deferred to Phase 0.10.x
+- Complete the Phase 0.8 dashboard and valuation foundation before Phase 0.9 analytics
 
 ---
 ## Planned Roadmap Toward v1.0
