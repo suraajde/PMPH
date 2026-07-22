@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 
 from services.portfolio_read_service import PortfolioReadService
+from services.portfolio_status_service import PortfolioStatusService
 
 
 DATABASE_PATH = "data/pmph_portfolio.db"
@@ -14,6 +15,15 @@ def show():
 
     read_service = PortfolioReadService(
         database_path=DATABASE_PATH,
+    )
+
+    status_service = PortfolioStatusService(
+        database_path=DATABASE_PATH,
+    )
+
+    portfolio_status = (
+        status_service
+        .get_portfolio_status()
     )
 
     summary = (
@@ -91,6 +101,67 @@ def show():
         "Consolidated Securities",
         summary["consolidated_holding_count"],
     )
+
+    # =====================================================
+    # DATA AND VALUATION STATUS
+    # =====================================================
+
+    st.markdown("---")
+
+    st.subheader(
+        "Data & Valuation Status"
+    )
+
+    status_columns = st.columns(
+        4
+    )
+
+    status_columns[0].metric(
+        "Valuation Coverage",
+        (
+            f"{portfolio_status['valuation_coverage_percent']:.2f}%"
+        ),
+    )
+
+    status_columns[1].metric(
+        "Valued Holdings",
+        (
+            f"{portfolio_status['valuation_covered_count']} / "
+            f"{portfolio_status['holding_count']}"
+        ),
+    )
+
+    status_columns[2].metric(
+        "Source Files",
+        portfolio_status["source_file_count"],
+    )
+
+    status_columns[3].metric(
+        "Market Freshness",
+        "Not Tracked"
+    )
+
+    latest_record_update = portfolio_status[
+        "latest_record_update"
+    ]
+
+    if latest_record_update:
+
+        st.caption(
+            "Latest persisted record update: "
+            + latest_record_update.strftime(
+                "%d %b %Y, %I:%M %p"
+            )
+        )
+
+    if portfolio_status["market_valuation_freshness"] == "NOT_TRACKED":
+
+        st.info(
+            "Market valuation freshness is not yet tracked. "
+            "The timestamp above represents the latest persisted "
+            "record update and must not be interpreted as a live "
+            "market-price timestamp."
+        )
 
     # =====================================================
     # SECURITY COMPOSITION

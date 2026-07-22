@@ -329,24 +329,166 @@ No regression detected in the protected persistence, read, or persistent UI foun
 
 ---
 
+## Sprint 0.8.2 - Dashboard Valuation and Data Freshness Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Added services/portfolio_status_service.py
+- Added read-only PortfolioStatusService
+- Added persisted holding valuation coverage measurement
+- Added valued-holding count and valuation coverage percentage
+- Added latest and oldest persisted record update timestamps
+- Added deduplicated source-file reporting
+- Added explicit market valuation freshness boundary
+- Added Data & Valuation Status section to the Dashboard
+- Added valuation coverage, valued holdings, source files, and market freshness metrics
+- Added latest persisted record-update presentation
+- Added explanatory UI notice distinguishing persisted record updates from live market-price timestamps
+- Added tests/test_portfolio_status_service.py
+- Kept external market-data fetching deferred to Phase 0.10.x
+
+### Live Status Verification
+
+Verified against:
+
+data/pmph_portfolio.db
+
+Verified result:
+
+- Holdings: 4
+- Valued holdings: 4
+- Valuation coverage: 100 percent
+- Persisted source files: 2
+- Source files:
+  - Holdings_prostocks.xlsx
+  - holdings-EY0423.xlsx
+- Latest persisted record update: 21 Jul 2026, approximately 04:08 PM
+- Market valuation freshness: NOT_TRACKED
+- Market valuation as-of timestamp: not available
+
+Important architecture boundary:
+
+The persisted holding update timestamp represents the time the PMPH holding
+record was imported or updated. It is not treated as a live market-price
+timestamp.
+
+Because PMPH does not yet persist a true market valuation as-of timestamp,
+Sprint 0.8.2 does not falsely classify valuations as fresh or stale.
+Market valuation freshness remains explicitly NOT_TRACKED until the planned
+Phase 0.10.x market-data architecture provides authoritative valuation timing.
+
+### Verification
+
+PASS:
+
+- Holding count
+- Valuation coverage
+- Source-file deduplication
+- Record update timestamps
+- Market freshness boundary
+- PortfolioStatusService isolated test
+- Portfolio Import Service
+- Protected Portfolio Batch Import
+
+No regression detected in the protected portfolio persistence/import foundation.
+
+---
+
+## Sprint 0.8.2 - Dashboard Valuation and Data Freshness Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Added services/portfolio_status_service.py
+- Added read-only PortfolioStatusService
+- Added persisted holding valuation coverage measurement
+- Added valued-holding count and valuation coverage percentage
+- Added latest and oldest persisted record update timestamps
+- Added deduplicated source-file reporting
+- Added explicit market valuation freshness boundary
+- Added Data & Valuation Status section to the Dashboard
+- Added valuation coverage, valued holdings, source files, and market freshness metrics
+- Added latest persisted record-update presentation
+- Added explanatory UI notice distinguishing persisted record updates from live market-price timestamps
+- Added tests/test_portfolio_status_service.py
+- Kept external market-data fetching deferred to Phase 0.10.x
+
+### Live Status Verification
+
+Verified against:
+
+data/pmph_portfolio.db
+
+Verified result:
+
+- Holdings: 4
+- Valued holdings: 4
+- Valuation coverage: 100 percent
+- Persisted source files: 2
+- Source files:
+  - Holdings_prostocks.xlsx
+  - holdings-EY0423.xlsx
+- Latest persisted record update: 21 Jul 2026, approximately 04:08 PM
+- Market valuation freshness: NOT_TRACKED
+- Market valuation as-of timestamp: not available
+
+Important architecture boundary:
+
+The persisted holding update timestamp represents the time the PMPH holding
+record was imported or updated. It is not treated as a live market-price
+timestamp.
+
+Because PMPH does not yet persist a true market valuation as-of timestamp,
+Sprint 0.8.2 does not falsely classify valuations as fresh or stale.
+Market valuation freshness remains explicitly NOT_TRACKED until the planned
+Phase 0.10.x market-data architecture provides authoritative valuation timing.
+
+### Verification
+
+PASS:
+
+- Holding count
+- Valuation coverage
+- Source-file deduplication
+- Record update timestamps
+- Market freshness boundary
+- PortfolioStatusService isolated test
+- Portfolio Import Service
+- Protected Portfolio Batch Import
+
+No regression detected in the protected portfolio persistence/import foundation.
+
+---
+
 ## Exact Continuation Point
 
 Completed Sprint:
 
-0.8.1 - Portfolio Dashboard Foundation
+0.8.2 - Dashboard Valuation and Data Freshness Foundation
 
-Next Sprint:
+Completed Phase:
 
-Sprint 0.8.2 - Dashboard Valuation and Data Freshness Foundation
+Phase 0.8.x - Portfolio Dashboard and Valuation
+
+Next Development Phase:
+
+Phase 0.9.x - Portfolio Health and Analytics Foundation
 
 Primary objective:
 
-Establish valuation-status and data-freshness visibility using persisted
-portfolio information, including stale or missing valuation detection and
-dashboard-level valuation coverage, while keeping external market-data
-fetching deferred to the planned Phase 0.10.x architecture.
+Begin the portfolio health analytics foundation using persisted portfolio
+information, starting with a clean analytics architecture and incremental
+diversification, concentration, and asset-allocation diagnostics while
+preserving the boundary with the later Phase 0.10.x market-data architecture.
+
+The exact first Sprint 0.9.x scope must be defined from the repository roadmap
+before implementation rather than reconstructed from chat memory.
 
 ---
+
 ## Development Continuity Rule
 
 Future PMPH sessions must begin by checking:

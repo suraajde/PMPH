@@ -173,19 +173,51 @@ Verified during development:
 
 ---
 
-## Next Sprint
+## Completed Dashboard Valuation and Data Freshness Foundation
 
 ### Sprint 0.8.2 - Dashboard Valuation and Data Freshness Foundation
+Status: COMPLETED
 
-Planned objectives:
+Objectives completed:
 
-- Establish valuation-status visibility from persisted portfolio data
-- Surface available holding valuation/update timestamps
-- Detect stale or missing valuation information
-- Add dashboard-level valuation coverage and freshness status
-- Preserve PortfolioReadService as the dashboard read boundary
-- Keep external market-data fetching deferred to Phase 0.10.x
-- Complete the Phase 0.8 dashboard and valuation foundation before Phase 0.9 analytics
+- Added read-only PortfolioStatusService for portfolio valuation/status reporting
+- Added persisted holding valuation coverage measurement
+- Added valued-holding count and valuation coverage percentage
+- Added persisted record update timestamp visibility
+- Added source-file count and deduplicated source-file reporting
+- Added dashboard Data & Valuation Status section
+- Explicitly separated persisted record-update timestamps from market-price freshness
+- Established market valuation freshness as NOT_TRACKED until the planned market-data architecture exists
+- Avoided falsely classifying persisted valuations as fresh or stale without a true market valuation timestamp
+- Preserved external market-data fetching for Phase 0.10.x
+- Added isolated PortfolioStatusService test coverage
+
+Verified during development:
+
+- Live persisted holding count: 4
+- Valuation coverage: 4 / 4 holdings
+- Valuation coverage percentage: 100 percent
+- Persisted source files: 2
+- Latest persisted record update surfaced successfully
+- Market valuation freshness correctly reported as NOT_TRACKED
+- Dashboard status section rendered successfully
+- Relevant persistence and import regression tests passed
+
+---
+
+## Next Phase
+
+### Phase 0.9.x - Portfolio Health and Analytics Foundation
+
+Planned direction:
+
+- Establish the portfolio health analysis architecture
+- Add diversification and concentration analysis
+- Add asset allocation diagnostics
+- Build toward fund/ETF overlap analysis
+- Establish risk, drawdown, and performance analytics foundations
+- Develop portfolio diagnostic scoring incrementally
+- Preserve clear boundaries between persisted portfolio analytics and the later Phase 0.10.x market-data architecture
 
 ---
 ## Planned Roadmap Toward v1.0
