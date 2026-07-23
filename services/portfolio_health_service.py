@@ -1,6 +1,9 @@
 from services.portfolio_analytics_service import (
     PortfolioAnalyticsService,
 )
+from services.portfolio_health_classification_service import (
+    PortfolioHealthClassificationService,
+)
 
 
 class PortfolioHealthService:
@@ -33,6 +36,10 @@ class PortfolioHealthService:
             PortfolioAnalyticsService(
                 database_path=database_path,
             )
+        )
+
+        self.classification_service = (
+            PortfolioHealthClassificationService()
         )
 
     def get_health_diagnostics(self):
@@ -77,6 +84,13 @@ class PortfolioHealthService:
                 }
             )
 
+        classification_result = (
+            self.classification_service
+            .classify_observations(
+                observations
+            )
+        )
+
         return {
             "framework": (
                 "PORTFOLIO_HEALTH_DIAGNOSTIC_FOUNDATION"
@@ -107,6 +121,31 @@ class PortfolioHealthService:
             "observations": observations,
             "observation_count": len(
                 observations
+            ),
+            "classifications": (
+                classification_result[
+                    "classifications"
+                ]
+            ),
+            "classification_count": (
+                classification_result[
+                    "classification_count"
+                ]
+            ),
+            "classification_status": (
+                classification_result[
+                    "classification_status"
+                ]
+            ),
+            "classification_scope": (
+                classification_result[
+                    "classification_scope"
+                ]
+            ),
+            "severity_classification": (
+                classification_result[
+                    "severity_classification"
+                ]
             ),
             "concentration_metrics": {
                 "largest_position_percent": (

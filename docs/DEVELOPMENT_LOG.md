@@ -720,11 +720,107 @@ allocation diagnostics, Dashboard, or portfolio-read foundation.
 
 ---
 
+---
+## Sprint 0.9.4 - Portfolio Health Diagnostic Classification Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Added services/portfolio_health_classification_service.py
+- Added deterministic descriptive diagnostic classification architecture
+- Kept factual diagnostic observations separate from classification output
+- Added SECURITY_CONCENTRATION classification
+- Added ACCOUNT_CONCENTRATION classification
+- Added ASSET_TYPE_CONCENTRATION classification
+- Preserved observed diagnostic values in classification output
+- Added explicit classification dimensions
+- Added classification type DESCRIPTIVE
+- Added classification status DESCRIPTIVE_ONLY
+- Added classification scope IMPORTED_PERSISTED_HOLDINGS
+- Added deterministic diagnostic-rule provenance
+- Added safe handling for unsupported or unknown observation codes
+- Integrated classification output into PortfolioHealthService
+- Preserved the existing observation contract
+- Added separate classifications and classification_count output
+- Preserved portfolio completeness as NOT_CONFIRMED
+- Preserved severity classification as NOT_DEFINED
+- Preserved health score as NOT_AVAILABLE
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Added tests/test_portfolio_health_classification_service.py
+- Added tests/test_portfolio_health_classification_integration.py
+- Added Diagnostic Classifications presentation to the Dashboard
+- Added explicit descriptive-only classification boundary
+- Added imported-holdings-only classification scope presentation
+- Added explicit Severity Classification: Not Defined presentation
+
+### Critical Architecture Boundary
+
+Sprint 0.9.4 introduces deterministic descriptive classifications only.
+
+Factual diagnostic observations remain separate from classification output.
+
+Classification labels describe the type of diagnostic observation and do not
+represent severity, portfolio-health scoring, target allocation, rebalance
+decisions, or investment recommendations.
+
+All classifications remain scoped only to holdings currently imported and
+persisted in PMPH.
+
+Portfolio completeness remains NOT_CONFIRMED.
+
+Severity classification remains NOT_DEFINED.
+
+Health scoring remains NOT_AVAILABLE.
+
+Target allocation remains NOT_DEFINED.
+
+Investment recommendations remain NOT_PROVIDED.
+
+Underlying ETF and mutual-fund diversification remains NOT_AVAILABLE.
+
+Fund/ETF underlying-holding overlap remains NOT_AVAILABLE.
+
+Market-dependent risk and performance analytics remain NOT_AVAILABLE.
+
+### Verification
+
+PASS:
+
+- Empty classification contract
+- Empty classification boundary
+- Deterministic classification mapping
+- Classification dimensions
+- Observed value preservation
+- Classification scope and provenance
+- Unknown observation safety
+- Imported portfolio scope
+- Scoring and recommendation boundary
+- Observation/classification separation
+- Deterministic health-framework classification integration
+- Classification architecture boundary
+- Sprint 0.9.3 Portfolio Health regression
+- Sprint 0.9.2 Allocation Diagnostics regression
+- Sprint 0.9.1 Portfolio Analytics regression
+- Portfolio Read Service regression
+- Dashboard UI render smoke test
+- Live Dashboard visual verification
+- Diagnostic Classifications presentation
+- Descriptive-only classification status presentation
+- Severity Classification: Not Defined presentation
+
+No regression detected in the existing portfolio-health framework, allocation
+diagnostics, persisted portfolio analytics, Dashboard, or portfolio-read
+foundation.
+
+---
+
 ## Exact Continuation Point
 
 Completed Sprint:
 
-0.9.3 - Portfolio Health Diagnostic Framework Foundation
+0.9.4 - Portfolio Health Diagnostic Classification Foundation
 
 Current Phase:
 
@@ -732,20 +828,22 @@ Phase 0.9.x - Portfolio Health and Analytics Foundation
 
 Next Sprint:
 
-0.9.4 - Portfolio Health Diagnostic Classification Foundation
+0.9.5 - Portfolio Health Diagnostic Severity Foundation
 
 Primary objective:
 
-Extend the observation-only portfolio-health framework with deterministic
-diagnostic classification architecture while preserving the distinction
-between factual observations, classifications, future scoring, and investment
-recommendations.
+Extend the diagnostic-classification architecture with deterministic severity
+classification while preserving the separation between factual observations,
+descriptive classifications, severity classifications, future health scoring,
+and investment recommendations.
 
-Any classification introduced in Sprint 0.9.4 must remain explicitly scoped
-to imported and persisted holdings while portfolio completeness remains
-NOT_CONFIRMED.
+Sprint 0.9.5 must define severity only where explicit deterministic rules and
+supported persisted data justify it.
 
-Sprint 0.9.4 must not introduce complete-portfolio conclusions, target
+Severity must remain scoped to imported and persisted holdings while portfolio
+completeness remains NOT_CONFIRMED.
+
+Sprint 0.9.5 must not introduce complete-portfolio health conclusions, target
 allocation, rebalance recommendations, underlying ETF/fund diversification,
 fund overlap conclusions, or market-dependent risk and performance analytics
 without the required supporting architecture and data.

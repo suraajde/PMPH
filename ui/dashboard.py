@@ -766,6 +766,87 @@ def show():
             "currently available for the imported holdings."
         )
 
+    # =====================================================
+    # DIAGNOSTIC CLASSIFICATIONS
+    # =====================================================
+
+    st.markdown(
+        "**Diagnostic Classifications**"
+    )
+
+    st.caption(
+        "Deterministic descriptive classifications derived from "
+        "the factual diagnostic observations above. These are "
+        "classification labels only and do not represent severity, "
+        "portfolio-health scoring, or investment recommendations."
+    )
+
+    classification_rows = []
+
+    for classification in health_diagnostics[
+        "classifications"
+    ]:
+
+        classification_rows.append(
+            {
+                "Dimension": (
+                    classification[
+                        "classification_dimension"
+                    ]
+                ),
+                "Classification": (
+                    classification[
+                        "classification"
+                    ]
+                ),
+                "Observed Value": (
+                    classification[
+                        "observed_value"
+                    ]
+                ),
+                "Type": (
+                    classification[
+                        "classification_type"
+                    ]
+                ),
+                "Scope": (
+                    "Imported Holdings Only"
+                    if classification[
+                        "classification_scope"
+                    ]
+                    == "IMPORTED_PERSISTED_HOLDINGS"
+                    else classification[
+                        "classification_scope"
+                    ]
+                ),
+                "Provenance": (
+                    classification[
+                        "provenance"
+                    ]
+                ),
+            }
+        )
+
+    if classification_rows:
+
+        st.dataframe(
+            classification_rows,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    else:
+
+        st.info(
+            "No diagnostic classifications are currently "
+            "available for the imported holdings."
+        )
+
+    st.caption(
+        "Classification Status: Descriptive Only | "
+        "Severity Classification: Not Defined"
+    )
+
     st.info(
         "Framework Boundary: PMPH currently provides factual "
         "diagnostic observations only. Portfolio health scoring, "

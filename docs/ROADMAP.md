@@ -330,13 +330,11 @@ until their required architecture and data are available.
 
 ---
 
-## Next Sprint
+## Sprint 0.9.4 - Portfolio Health Diagnostic Classification Foundation
 
-### Sprint 0.9.4 - Portfolio Health Diagnostic Classification Foundation
+Status: COMPLETED
 
-Status: PLANNED
-
-Planned objectives:
+Objectives completed:
 
 - Extend the observation-only health framework with deterministic diagnostic classifications
 - Keep factual observations separate from classification output
@@ -349,6 +347,27 @@ Planned objectives:
 - Preserve underlying ETF/fund diversification and overlap boundaries
 - Keep market-dependent risk and performance analytics aligned with the later market-data foundation
 - Continue building incrementally toward a future portfolio-health scoring architecture
+
+---
+## Next Sprint
+
+### Sprint 0.9.5 - Portfolio Health Diagnostic Severity Foundation
+
+Status: PLANNED
+
+Planned objectives:
+
+- Extend deterministic diagnostic classifications with an explicit severity-classification layer
+- Keep factual observations, descriptive classifications, and severity classifications separate
+- Define deterministic severity rules only where supported by explicit persisted-data evidence
+- Preserve classification scope and provenance
+- Preserve imported-persisted-holdings scope
+- Preserve portfolio completeness as NOT_CONFIRMED
+- Avoid complete-portfolio health conclusions
+- Avoid premature portfolio-health scoring
+- Avoid target-allocation, rebalance, or investment recommendations
+- Preserve underlying ETF/fund diversification and overlap boundaries
+- Keep market-dependent risk and performance analytics deferred until the required architecture and data exist
 
 ---
 ## Planned Roadmap Toward v1.0
