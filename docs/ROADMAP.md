@@ -1,4 +1,4 @@
-﻿# PMPH Development Roadmap
+# PMPH Development Roadmap
 
 ## Project
 PMPH - Portfolio Manager & Portfolio Health
@@ -252,24 +252,60 @@ the required instrument-intelligence and underlying-holdings architecture.
 
 ---
 
+
+## Sprint 0.9.2 - Portfolio Allocation Diagnostics Foundation
+
+Status: COMPLETED
+
+Objectives completed:
+
+- Extended PortfolioAnalyticsService with deterministic allocation diagnostics
+- Added factual allocation observations from persisted portfolio information
+- Added largest-security allocation observation
+- Added Top-3 security allocation observation
+- Added largest-account allocation observation
+- Added largest-asset-type allocation observation
+- Established explicit imported-portfolio analytics scope
+- Established portfolio completeness as NOT_CONFIRMED
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Preserved underlying diversification as NOT_AVAILABLE
+- Preserved fund/ETF overlap as NOT_AVAILABLE
+- Added dedicated allocation-diagnostics test coverage
+- Added Dashboard incomplete-portfolio Analysis Scope warning
+- Renamed displayed percentages to Imported Holdings Weight %
+- Visually verified the Dashboard scope presentation
+
+Important architecture boundary:
+
+The holdings currently imported into PMPH do not represent the complete
+investment portfolio.
+
+All current allocation and concentration percentages describe only the
+holdings currently imported and persisted in PMPH. They must not be
+interpreted as complete-portfolio allocation, concentration,
+diversification, or exposure.
+
+---
+
 ## Next Sprint
 
-### Sprint 0.9.2 - Portfolio Allocation Diagnostics Foundation
+### Sprint 0.9.3 - Portfolio Health Diagnostic Framework Foundation
+
 Status: PLANNED
 
 Planned objectives:
 
-- Extend the read-only portfolio analytics architecture with allocation diagnostics
-- Build diagnostics only from reliably persisted portfolio information
-- Add deterministic allocation observations without premature recommendation logic
-- Preserve consolidated-security and account-ownership boundaries
-- Avoid unsupported underlying ETF/fund diversification conclusions
-- Keep fund/ETF overlap dependent on the required underlying-holdings architecture
-- Keep market-dependent risk, drawdown, and performance analytics aligned with the later market-data foundation
-- Continue building toward an incremental portfolio diagnostic scoring framework
+- Establish a structured portfolio-health diagnostic framework
+- Consolidate deterministic concentration and allocation observations
+- Preserve explicit imported-portfolio scope and completeness boundaries
+- Separate factual observations from future scoring and recommendations
+- Avoid unsupported target-allocation or rebalance conclusions
+- Preserve underlying ETF/fund diversification and overlap boundaries
+- Keep market-dependent analytics aligned with Phase 0.10.x
+- Build toward incremental portfolio diagnostic scoring
 
 ---
-
 ## Planned Roadmap Toward v1.0
 
 ### Phase 0.8.x - Portfolio Dashboard and Valuation

@@ -481,8 +481,8 @@ def show():
     )
 
     st.caption(
-        "Position-level concentration analytics based on "
-        "persisted portfolio securities and account values."
+        "Position-level analytics for holdings currently "
+        "imported and persisted in PMPH."
     )
 
     analytics_service = PortfolioAnalyticsService(
@@ -494,6 +494,11 @@ def show():
         .get_concentration_summary()
     )
 
+    allocation_diagnostics = (
+        analytics_service
+        .get_allocation_diagnostics()
+    )
+
     security_concentration = (
         analytics_service
         .get_security_concentration()
@@ -503,6 +508,22 @@ def show():
         analytics_service
         .get_account_concentration()
     )
+
+    if (
+        allocation_diagnostics[
+            "portfolio_completeness"
+        ]
+        != "CONFIRMED"
+    ):
+
+        st.warning(
+            "Analysis Scope: These diagnostics are based only on "
+            "holdings currently imported into PMPH. Portfolio "
+            "completeness has not been confirmed. Percentages shown "
+            "below represent allocation within the imported holdings "
+            "only and must not be interpreted as allocation across "
+            "the complete investment portfolio."
+        )
 
     concentration_columns = st.columns(
         4
@@ -552,7 +573,7 @@ def show():
                 "Current Value": (
                     position["current_value"]
                 ),
-                "Portfolio Weight %": (
+                "Imported Holdings Weight %": (
                     position["weight_percent"]
                 ),
             }
@@ -569,9 +590,9 @@ def show():
                     format="₹ %.2f",
                 )
             ),
-            "Portfolio Weight %": (
+            "Imported Holdings Weight %": (
                 st.column_config.NumberColumn(
-                    "Portfolio Weight %",
+                    "Imported Holdings Weight %",
                     format="%.2f %%",
                 )
             ),
@@ -602,7 +623,7 @@ def show():
                 "Current Value": (
                     account_item["current_value"]
                 ),
-                "Portfolio Weight %": (
+                "Imported Holdings Weight %": (
                     account_item["weight_percent"]
                 ),
             }
@@ -619,9 +640,9 @@ def show():
                     format="₹ %.2f",
                 )
             ),
-            "Portfolio Weight %": (
+            "Imported Holdings Weight %": (
                 st.column_config.NumberColumn(
-                    "Portfolio Weight %",
+                    "Imported Holdings Weight %",
                     format="%.2f %%",
                 )
             ),
@@ -629,8 +650,10 @@ def show():
     )
 
     st.info(
-        "These metrics measure concentration of the persisted "
-        "security positions and accounts. They do not yet measure "
-        "underlying diversification inside ETFs or mutual funds. "
-        "Fund/ETF overlap analysis is also not yet available."
+        "Current analytics measure concentration only within the "
+        "holdings imported into PMPH. They do not establish the "
+        "allocation or concentration of the complete investment "
+        "portfolio. Underlying diversification inside ETFs or mutual "
+        "funds is not yet measured, and fund/ETF overlap analysis is "
+        "not yet available."
     )

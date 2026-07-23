@@ -1,4 +1,4 @@
-﻿# PMPH Development Log
+# PMPH Development Log
 
 ## Project
 
@@ -561,29 +561,101 @@ PASS:
 No regression detected in the existing dashboard and portfolio read foundation.
 
 ---
+## Sprint 0.9.2 - Portfolio Allocation Diagnostics Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Extended PortfolioAnalyticsService with deterministic allocation diagnostics
+- Added factual allocation observations derived only from persisted portfolio information
+- Added largest-security allocation observation
+- Added Top-3 security allocation observation
+- Added largest-account allocation observation
+- Added largest-asset-type allocation observation
+- Added explicit imported-portfolio analytics scope
+- Established portfolio completeness as NOT_CONFIRMED
+- Established complete-portfolio analytics as NOT_AVAILABLE
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Preserved underlying diversification as NOT_AVAILABLE
+- Preserved fund/ETF overlap as NOT_AVAILABLE
+- Added tests/test_portfolio_allocation_diagnostics.py
+- Added Dashboard incomplete-portfolio Analysis Scope warning
+- Renamed displayed percentages to Imported Holdings Weight %
+- Updated Dashboard explanatory notice to prevent complete-portfolio interpretation
+
+### Critical Portfolio Scope Boundary
+
+The holdings currently imported and persisted in PMPH do not represent the
+complete investment portfolio.
+
+All current security, account, and asset-type allocation or concentration
+percentages therefore describe only the holdings currently imported and
+persisted in PMPH.
+
+These percentages must not be interpreted as complete-portfolio allocation,
+concentration, diversification, or exposure.
+
+Portfolio completeness remains NOT_CONFIRMED.
+
+Sprint 0.9.2 does not define target allocation and does not produce
+overweight/underweight classifications, rebalance decisions, or investment
+recommendations.
+
+Underlying ETF and mutual-fund diversification remains NOT_AVAILABLE.
+
+Fund/ETF underlying-holding overlap remains NOT_AVAILABLE.
+
+### Verification
+
+PASS:
+
+- Empty imported portfolio behavior
+- Empty portfolio scope boundary
+- Allocation diagnostics contract
+- Allocation diagnostic values
+- Imported portfolio scope
+- Recommendation boundary
+- Sprint 0.9.1 Portfolio Analytics Service regression
+- Dashboard UI render smoke test
+- Portfolio Read Service regression
+- Live Dashboard visual verification
+- Analysis Scope warning visibility
+- Imported Holdings Weight % presentation
+
+No regression detected in the existing persisted portfolio analytics,
+Dashboard, or portfolio-read foundation.
+
+---
+
 ## Exact Continuation Point
 
 Completed Sprint:
 
-0.8.2 - Dashboard Valuation and Data Freshness Foundation
+0.9.2 - Portfolio Allocation Diagnostics Foundation
 
-Completed Phase:
-
-Phase 0.8.x - Portfolio Dashboard and Valuation
-
-Next Development Phase:
+Current Phase:
 
 Phase 0.9.x - Portfolio Health and Analytics Foundation
 
+Next Sprint:
+
+0.9.3 - Portfolio Health Diagnostic Framework Foundation
+
 Primary objective:
 
-Begin the portfolio health analytics foundation using persisted portfolio
-information, starting with a clean analytics architecture and incremental
-diversification, concentration, and asset-allocation diagnostics while
-preserving the boundary with the later Phase 0.10.x market-data architecture.
+Establish a structured portfolio-health diagnostic framework that consolidates
+deterministic concentration and allocation observations while preserving the
+explicit boundary that currently imported holdings do not represent the
+complete investment portfolio.
 
-The exact first Sprint 0.9.x scope must be defined from the repository roadmap
-before implementation rather than reconstructed from chat memory.
+The next sprint must keep factual diagnostic observations separate from future
+scoring, target-allocation, recommendation, overlap, and market-dependent
+analytics.
+
+Portfolio completeness remains NOT_CONFIRMED until future architecture and
+data explicitly establish otherwise.
 
 ---
 

@@ -379,3 +379,218 @@ class PortfolioAnalyticsService:
                 "NOT_AVAILABLE"
             ),
         }
+    # =====================================================
+    # ALLOCATION DIAGNOSTICS
+    # =====================================================
+
+    def get_allocation_diagnostics(self):
+        """
+        Return deterministic allocation observations derived
+        only from persisted portfolio information.
+
+        These diagnostics describe observable allocation
+        structure. They do not define target allocations,
+        overweight/underweight states, or recommendations.
+        """
+
+        security = (
+            self.get_security_concentration()
+        )
+
+        account = (
+            self.get_account_concentration()
+        )
+
+        asset_type = (
+            self.get_asset_type_concentration()
+        )
+
+        diagnostics = []
+
+        positions = security[
+            "positions"
+        ]
+
+        if positions:
+
+            largest_position = positions[0]
+
+            diagnostics.append(
+                {
+                    "code": (
+                        "LARGEST_SECURITY_POSITION"
+                    ),
+                    "dimension": "SECURITY",
+                    "observed_value": (
+                        largest_position[
+                            "weight_percent"
+                        ]
+                    ),
+                    "symbol": (
+                        largest_position[
+                            "symbol"
+                        ]
+                    ),
+                    "message": (
+                        "Largest persisted security position "
+                        f"is {largest_position['symbol']} at "
+                        f"{largest_position['weight_percent']:.2f}% "
+                        "of current portfolio value."
+                    ),
+                }
+            )
+
+            diagnostics.append(
+                {
+                    "code": (
+                        "TOP_THREE_SECURITY_ALLOCATION"
+                    ),
+                    "dimension": "SECURITY",
+                    "observed_value": (
+                        security[
+                            "top_3_percent"
+                        ]
+                    ),
+                    "message": (
+                        "Top three persisted security positions "
+                        "represent "
+                        f"{security['top_3_percent']:.2f}% "
+                        "of current portfolio value."
+                    ),
+                }
+            )
+
+        accounts = account[
+            "accounts"
+        ]
+
+        if accounts:
+
+            largest_account = accounts[0]
+
+            diagnostics.append(
+                {
+                    "code": (
+                        "LARGEST_ACCOUNT_ALLOCATION"
+                    ),
+                    "dimension": "ACCOUNT",
+                    "observed_value": (
+                        largest_account[
+                            "weight_percent"
+                        ]
+                    ),
+                    "account_id": (
+                        largest_account[
+                            "account_id"
+                        ]
+                    ),
+                    "owner_name": (
+                        largest_account[
+                            "owner_name"
+                        ]
+                    ),
+                    "platform_name": (
+                        largest_account[
+                            "platform_name"
+                        ]
+                    ),
+                    "account_name": (
+                        largest_account[
+                            "account_name"
+                        ]
+                    ),
+                    "message": (
+                        "Largest persisted account allocation "
+                        "represents "
+                        f"{largest_account['weight_percent']:.2f}% "
+                        "of current portfolio value."
+                    ),
+                }
+            )
+
+        asset_types = asset_type[
+            "asset_types"
+        ]
+
+        if asset_types:
+
+            largest_asset_type = (
+                asset_types[0]
+            )
+
+            diagnostics.append(
+                {
+                    "code": (
+                        "LARGEST_ASSET_TYPE_ALLOCATION"
+                    ),
+                    "dimension": "ASSET_TYPE",
+                    "observed_value": (
+                        largest_asset_type[
+                            "weight_percent"
+                        ]
+                    ),
+                    "asset_type": (
+                        largest_asset_type[
+                            "asset_type"
+                        ]
+                    ),
+                    "message": (
+                        "Largest persisted asset-type allocation "
+                        f"is {largest_asset_type['asset_type']} at "
+                        f"{largest_asset_type['weight_percent']:.2f}% "
+                        "of current portfolio value."
+                    ),
+                }
+            )
+
+        return {
+            "portfolio_current_value": (
+                security[
+                    "total_current_value"
+                ]
+            ),
+            "security_count": (
+                security[
+                    "security_count"
+                ]
+            ),
+            "account_count": (
+                account[
+                    "account_count"
+                ]
+            ),
+            "asset_type_count": (
+                asset_type[
+                    "asset_type_count"
+                ]
+            ),
+            "diagnostics": diagnostics,
+            "diagnostic_count": len(
+                diagnostics
+            ),
+            "allocation_scope": (
+                "IMPORTED_PERSISTED_HOLDINGS"
+            ),
+            "portfolio_completeness": (
+                "NOT_CONFIRMED"
+            ),
+            "scope_description": (
+                "Analytics reflect only holdings currently "
+                "imported and persisted in PMPH. They must "
+                "not be interpreted as complete-portfolio "
+                "analytics until portfolio completeness is "
+                "explicitly confirmed."
+            ),
+            "target_allocation": (
+                "NOT_DEFINED"
+            ),
+            "recommendation_status": (
+                "NOT_PROVIDED"
+            ),
+            "underlying_diversification": (
+                "NOT_AVAILABLE"
+            ),
+            "fund_etf_overlap": (
+                "NOT_AVAILABLE"
+            ),
+        }
