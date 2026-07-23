@@ -292,18 +292,63 @@ diversification, or exposure.
 
 ### Sprint 0.9.3 - Portfolio Health Diagnostic Framework Foundation
 
+Status: COMPLETED
+
+Objectives completed:
+
+- Established PortfolioHealthService as a read-only health-diagnostic boundary
+- Consolidated deterministic concentration and allocation observations
+- Added structured diagnostic observations with explicit source attribution
+- Added consolidated concentration metrics to the health framework
+- Established framework status as OBSERVATION_ONLY
+- Preserved imported-persisted-holdings analysis scope
+- Preserved portfolio completeness as NOT_CONFIRMED
+- Preserved complete-portfolio analytics as NOT_AVAILABLE
+- Preserved health score as NOT_AVAILABLE
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Preserved underlying diversification as NOT_AVAILABLE
+- Preserved fund/ETF overlap as NOT_AVAILABLE
+- Preserved market-dependent analytics as NOT_AVAILABLE
+- Added dedicated PortfolioHealthService test coverage
+- Integrated the diagnostic framework into the Dashboard
+- Added explicit Portfolio Health Scope and Framework Boundary presentation
+- Visually verified the live Dashboard integration
+
+Important architecture boundary:
+
+Sprint 0.9.3 is observation-only.
+
+The framework describes factual conditions derived from holdings currently
+imported and persisted in PMPH. Portfolio completeness remains NOT_CONFIRMED,
+so these observations must not be interpreted as complete-portfolio health
+conclusions.
+
+Health scoring, target allocation, recommendations, underlying ETF/fund
+diversification, fund overlap, and market-dependent analytics remain deferred
+until their required architecture and data are available.
+
+---
+
+## Next Sprint
+
+### Sprint 0.9.4 - Portfolio Health Diagnostic Classification Foundation
+
 Status: PLANNED
 
 Planned objectives:
 
-- Establish a structured portfolio-health diagnostic framework
-- Consolidate deterministic concentration and allocation observations
-- Preserve explicit imported-portfolio scope and completeness boundaries
-- Separate factual observations from future scoring and recommendations
-- Avoid unsupported target-allocation or rebalance conclusions
+- Extend the observation-only health framework with deterministic diagnostic classifications
+- Keep factual observations separate from classification output
+- Define explicit classification scope and provenance
+- Preserve imported-persisted-holdings scope
+- Preserve portfolio completeness as NOT_CONFIRMED
+- Avoid complete-portfolio health conclusions
+- Avoid premature health scoring
+- Avoid target-allocation and rebalance recommendations
 - Preserve underlying ETF/fund diversification and overlap boundaries
-- Keep market-dependent analytics aligned with Phase 0.10.x
-- Build toward incremental portfolio diagnostic scoring
+- Keep market-dependent risk and performance analytics aligned with the later market-data foundation
+- Continue building incrementally toward a future portfolio-health scoring architecture
 
 ---
 ## Planned Roadmap Toward v1.0

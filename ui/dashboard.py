@@ -1,10 +1,11 @@
-﻿import altair as alt
+import altair as alt
 import pandas as pd
 import streamlit as st
 
 from services.portfolio_read_service import PortfolioReadService
 from services.portfolio_status_service import PortfolioStatusService
 from services.portfolio_analytics_service import PortfolioAnalyticsService
+from services.portfolio_health_service import PortfolioHealthService
 
 
 DATABASE_PATH = "data/pmph_portfolio.db"
@@ -656,4 +657,119 @@ def show():
         "portfolio. Underlying diversification inside ETFs or mutual "
         "funds is not yet measured, and fund/ETF overlap analysis is "
         "not yet available."
+    )
+    # =====================================================
+    # PORTFOLIO HEALTH - DIAGNOSTIC FRAMEWORK
+    # =====================================================
+
+    st.markdown("---")
+
+    st.subheader(
+        "Portfolio Health - Diagnostic Framework"
+    )
+
+    st.caption(
+        "Structured factual observations derived from holdings "
+        "currently imported and persisted in PMPH."
+    )
+
+    health_service = PortfolioHealthService(
+        database_path=DATABASE_PATH,
+    )
+
+    health_diagnostics = (
+        health_service
+        .get_health_diagnostics()
+    )
+
+    health_columns = st.columns(
+        4
+    )
+
+    health_columns[0].metric(
+        "Framework Status",
+        "Observation Only",
+    )
+
+    health_columns[1].metric(
+        "Analysis Scope",
+        "Imported Holdings Only",
+    )
+
+    health_columns[2].metric(
+        "Portfolio Completeness",
+        (
+            "Not Confirmed"
+            if health_diagnostics[
+                "portfolio_completeness"
+            ] != "CONFIRMED"
+            else "Confirmed"
+        ),
+    )
+
+    health_columns[3].metric(
+        "Health Score",
+        "Not Available",
+    )
+
+    st.warning(
+        "Portfolio Health Scope: The current diagnostic framework "
+        "uses only holdings imported into PMPH. These holdings do "
+        "not currently represent a confirmed complete investment "
+        "portfolio. Observations below must therefore be interpreted "
+        "only within the imported holdings and not as complete-portfolio "
+        "health conclusions."
+    )
+
+    st.markdown(
+        "**Current Diagnostic Observations**"
+    )
+
+    observation_rows = []
+
+    for observation in health_diagnostics[
+        "observations"
+    ]:
+
+        observation_rows.append(
+            {
+                "Dimension": (
+                    observation[
+                        "dimension"
+                    ]
+                ),
+                "Observation": (
+                    observation[
+                        "message"
+                    ]
+                ),
+                "Source": (
+                    observation[
+                        "source"
+                    ]
+                ),
+            }
+        )
+
+    if observation_rows:
+
+        st.dataframe(
+            observation_rows,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    else:
+
+        st.info(
+            "No portfolio-health diagnostic observations are "
+            "currently available for the imported holdings."
+        )
+
+    st.info(
+        "Framework Boundary: PMPH currently provides factual "
+        "diagnostic observations only. Portfolio health scoring, "
+        "target allocation, investment recommendations, underlying "
+        "ETF/fund diversification, fund overlap, and market-dependent "
+        "risk or performance analytics are not yet available."
     )

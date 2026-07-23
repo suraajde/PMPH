@@ -628,12 +628,103 @@ No regression detected in the existing persisted portfolio analytics,
 Dashboard, or portfolio-read foundation.
 
 ---
+---
+
+## Sprint 0.9.3 - Portfolio Health Diagnostic Framework Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Added services/portfolio_health_service.py
+- Established PortfolioHealthService as a read-only health-diagnostic boundary
+- Consolidated deterministic allocation observations into a structured health framework
+- Reused PortfolioAnalyticsService rather than duplicating concentration calculations
+- Added framework identifier PORTFOLIO_HEALTH_DIAGNOSTIC_FOUNDATION
+- Established framework status as OBSERVATION_ONLY
+- Added structured diagnostic observations with explicit source attribution
+- Consolidated concentration metrics into the health-diagnostic contract
+- Preserved imported-persisted-holdings analysis scope
+- Preserved portfolio completeness as NOT_CONFIRMED
+- Preserved complete-portfolio analytics as NOT_AVAILABLE
+- Preserved health score as NOT_AVAILABLE
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Preserved underlying diversification as NOT_AVAILABLE
+- Preserved fund/ETF overlap as NOT_AVAILABLE
+- Preserved market-dependent analytics as NOT_AVAILABLE
+- Added tests/test_portfolio_health_service.py
+- Integrated the Portfolio Health Diagnostic Framework into the Dashboard
+- Added framework-status presentation
+- Added imported-holdings-only analysis-scope presentation
+- Added portfolio-completeness presentation
+- Added health-score availability presentation
+- Added Current Diagnostic Observations table
+- Added explicit Portfolio Health Scope warning
+- Added explicit Framework Boundary notice
+
+### Critical Architecture Boundary
+
+Sprint 0.9.3 is an observation-only diagnostic framework.
+
+It consolidates factual observations that can be derived from holdings currently
+imported and persisted in PMPH.
+
+The currently imported holdings do not represent a confirmed complete
+investment portfolio.
+
+The framework therefore must not interpret current observations as
+complete-portfolio health conclusions.
+
+Portfolio completeness remains NOT_CONFIRMED.
+
+Health scoring remains NOT_AVAILABLE.
+
+Target allocation remains NOT_DEFINED.
+
+Investment recommendations remain NOT_PROVIDED.
+
+Underlying ETF and mutual-fund diversification remains NOT_AVAILABLE.
+
+Fund/ETF underlying-holding overlap remains NOT_AVAILABLE.
+
+Market-dependent risk and performance analytics remain NOT_AVAILABLE.
+
+Future scoring or recommendation logic must remain separate from factual
+diagnostic observations until the required data and architecture exist.
+
+### Verification
+
+PASS:
+
+- Empty portfolio health contract
+- Empty portfolio scope boundary
+- Health framework contract
+- Diagnostic observations
+- Concentration metrics
+- Imported portfolio scope
+- Scoring and recommendation boundary
+- Deferred analytics boundary
+- Sprint 0.9.2 Allocation Diagnostics regression
+- Sprint 0.9.1 Portfolio Analytics regression
+- Portfolio Read Service regression
+- Dashboard UI render smoke test
+- Live Dashboard visual verification
+- Portfolio Health Scope warning visibility
+- Diagnostic Framework metrics presentation
+- Current Diagnostic Observations presentation
+- Framework Boundary presentation
+
+No regression detected in the existing persisted portfolio analytics,
+allocation diagnostics, Dashboard, or portfolio-read foundation.
+
+---
 
 ## Exact Continuation Point
 
 Completed Sprint:
 
-0.9.2 - Portfolio Allocation Diagnostics Foundation
+0.9.3 - Portfolio Health Diagnostic Framework Foundation
 
 Current Phase:
 
@@ -641,21 +732,23 @@ Phase 0.9.x - Portfolio Health and Analytics Foundation
 
 Next Sprint:
 
-0.9.3 - Portfolio Health Diagnostic Framework Foundation
+0.9.4 - Portfolio Health Diagnostic Classification Foundation
 
 Primary objective:
 
-Establish a structured portfolio-health diagnostic framework that consolidates
-deterministic concentration and allocation observations while preserving the
-explicit boundary that currently imported holdings do not represent the
-complete investment portfolio.
+Extend the observation-only portfolio-health framework with deterministic
+diagnostic classification architecture while preserving the distinction
+between factual observations, classifications, future scoring, and investment
+recommendations.
 
-The next sprint must keep factual diagnostic observations separate from future
-scoring, target-allocation, recommendation, overlap, and market-dependent
-analytics.
+Any classification introduced in Sprint 0.9.4 must remain explicitly scoped
+to imported and persisted holdings while portfolio completeness remains
+NOT_CONFIRMED.
 
-Portfolio completeness remains NOT_CONFIRMED until future architecture and
-data explicitly establish otherwise.
+Sprint 0.9.4 must not introduce complete-portfolio conclusions, target
+allocation, rebalance recommendations, underlying ETF/fund diversification,
+fund overlap conclusions, or market-dependent risk and performance analytics
+without the required supporting architecture and data.
 
 ---
 
