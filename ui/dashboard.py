@@ -4,6 +4,7 @@ import streamlit as st
 
 from services.portfolio_read_service import PortfolioReadService
 from services.portfolio_status_service import PortfolioStatusService
+from services.portfolio_analytics_service import PortfolioAnalyticsService
 
 
 DATABASE_PATH = "data/pmph_portfolio.db"
@@ -468,4 +469,168 @@ def show():
                 )
             ),
         },
+    )
+    # =====================================================
+    # PORTFOLIO HEALTH - CONCENTRATION ANALYTICS
+    # =====================================================
+
+    st.markdown("---")
+
+    st.subheader(
+        "Portfolio Health - Concentration Analytics"
+    )
+
+    st.caption(
+        "Position-level concentration analytics based on "
+        "persisted portfolio securities and account values."
+    )
+
+    analytics_service = PortfolioAnalyticsService(
+        database_path=DATABASE_PATH,
+    )
+
+    concentration_summary = (
+        analytics_service
+        .get_concentration_summary()
+    )
+
+    security_concentration = (
+        analytics_service
+        .get_security_concentration()
+    )
+
+    account_concentration = (
+        analytics_service
+        .get_account_concentration()
+    )
+
+    concentration_columns = st.columns(
+        4
+    )
+
+    concentration_columns[0].metric(
+        "Largest Position",
+        (
+            f"{concentration_summary['largest_position_percent']:.2f}%"
+        ),
+    )
+
+    concentration_columns[1].metric(
+        "Top 3 Concentration",
+        (
+            f"{concentration_summary['top_3_percent']:.2f}%"
+        ),
+    )
+
+    concentration_columns[2].metric(
+        "Effective Positions",
+        (
+            f"{concentration_summary['effective_security_positions']:.2f}"
+        ),
+    )
+
+    concentration_columns[3].metric(
+        "Largest Account",
+        (
+            f"{concentration_summary['largest_account_percent']:.2f}%"
+        ),
+    )
+
+    st.markdown(
+        "**Security Concentration**"
+    )
+
+    security_rows = []
+
+    for position in security_concentration[
+        "positions"
+    ]:
+
+        security_rows.append(
+            {
+                "Security": position["symbol"],
+                "Current Value": (
+                    position["current_value"]
+                ),
+                "Portfolio Weight %": (
+                    position["weight_percent"]
+                ),
+            }
+        )
+
+    st.dataframe(
+        security_rows,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Current Value": (
+                st.column_config.NumberColumn(
+                    "Current Value",
+                    format="₹ %.2f",
+                )
+            ),
+            "Portfolio Weight %": (
+                st.column_config.NumberColumn(
+                    "Portfolio Weight %",
+                    format="%.2f %%",
+                )
+            ),
+        },
+    )
+
+    st.markdown(
+        "**Account Concentration**"
+    )
+
+    concentration_account_rows = []
+
+    for account_item in account_concentration[
+        "accounts"
+    ]:
+
+        concentration_account_rows.append(
+            {
+                "Owner": (
+                    account_item["owner_name"]
+                ),
+                "Platform": (
+                    account_item["platform_name"]
+                ),
+                "Account": (
+                    account_item["account_name"]
+                ),
+                "Current Value": (
+                    account_item["current_value"]
+                ),
+                "Portfolio Weight %": (
+                    account_item["weight_percent"]
+                ),
+            }
+        )
+
+    st.dataframe(
+        concentration_account_rows,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Current Value": (
+                st.column_config.NumberColumn(
+                    "Current Value",
+                    format="₹ %.2f",
+                )
+            ),
+            "Portfolio Weight %": (
+                st.column_config.NumberColumn(
+                    "Portfolio Weight %",
+                    format="%.2f %%",
+                )
+            ),
+        },
+    )
+
+    st.info(
+        "These metrics measure concentration of the persisted "
+        "security positions and accounts. They do not yet measure "
+        "underlying diversification inside ETFs or mutual funds. "
+        "Fund/ETF overlap analysis is also not yet available."
     )

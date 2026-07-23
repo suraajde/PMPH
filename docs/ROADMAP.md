@@ -205,21 +205,71 @@ Verified during development:
 
 ---
 
-## Next Phase
+## Current Phase
 
 ### Phase 0.9.x - Portfolio Health and Analytics Foundation
+Status: IN PROGRESS
 
-Planned direction:
+### Sprint 0.9.1 - Portfolio Concentration Analytics Foundation
+Status: COMPLETED
 
-- Establish the portfolio health analysis architecture
-- Add diversification and concentration analysis
-- Add asset allocation diagnostics
-- Build toward fund/ETF overlap analysis
-- Establish risk, drawdown, and performance analytics foundations
-- Develop portfolio diagnostic scoring incrementally
-- Preserve clear boundaries between persisted portfolio analytics and the later Phase 0.10.x market-data architecture
+Objectives completed:
+
+- Established read-only PortfolioAnalyticsService
+- Reused PortfolioReadService as the persisted portfolio read boundary
+- Added persisted security-position concentration analysis
+- Added security ranking and portfolio-weight calculations
+- Added largest-position and Top-3 concentration metrics
+- Added security HHI calculation
+- Added effective security-position calculation
+- Added account concentration and account HHI
+- Added persisted asset-type concentration and asset-type HHI
+- Added consolidated concentration summary
+- Added explicit analytics scope and availability boundaries
+- Integrated concentration analytics into the Dashboard
+- Added deterministic PortfolioAnalyticsService test coverage
+- Preserved the boundary with the later market-data and instrument-intelligence architecture
+
+Verified during development:
+
+- Largest security position: approximately 53.48 percent
+- Top-3 security concentration: approximately 95.27 percent
+- Security HHI: approximately 0.392727
+- Effective security positions: approximately 2.55
+- Largest account concentration: approximately 88.37 percent
+- Account HHI: approximately 0.794518
+- Persisted asset-type metadata: ETF 100 percent
+- Dashboard analytics section rendered and visually verified
+- Underlying ETF/fund diversification remains NOT_AVAILABLE
+- Fund/ETF overlap remains NOT_AVAILABLE
+
+Important architecture boundary:
+
+Sprint 0.9.1 measures concentration using persisted wrapper positions,
+accounts, and persisted asset-type metadata. It does not infer underlying
+ETF or mutual-fund diversification, sector exposure, or fund overlap without
+the required instrument-intelligence and underlying-holdings architecture.
 
 ---
+
+## Next Sprint
+
+### Sprint 0.9.2 - Portfolio Allocation Diagnostics Foundation
+Status: PLANNED
+
+Planned objectives:
+
+- Extend the read-only portfolio analytics architecture with allocation diagnostics
+- Build diagnostics only from reliably persisted portfolio information
+- Add deterministic allocation observations without premature recommendation logic
+- Preserve consolidated-security and account-ownership boundaries
+- Avoid unsupported underlying ETF/fund diversification conclusions
+- Keep fund/ETF overlap dependent on the required underlying-holdings architecture
+- Keep market-dependent risk, drawdown, and performance analytics aligned with the later market-data foundation
+- Continue building toward an incremental portfolio diagnostic scoring framework
+
+---
+
 ## Planned Roadmap Toward v1.0
 
 ### Phase 0.8.x - Portfolio Dashboard and Valuation

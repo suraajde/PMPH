@@ -463,6 +463,104 @@ No regression detected in the protected portfolio persistence/import foundation.
 
 ---
 
+## Sprint 0.9.1 - Portfolio Concentration Analytics Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Added services/portfolio_analytics_service.py
+- Established a read-only portfolio analytics service over persisted portfolio data
+- Reused PortfolioReadService as the portfolio read boundary
+- Added security-position concentration analytics
+- Added security ranking by current portfolio value
+- Added portfolio-weight calculation for persisted security positions
+- Added largest-position concentration
+- Added Top-3 security concentration
+- Added Herfindahl-Hirschman Index (HHI) calculation for security positions
+- Added effective security-position calculation
+- Added account-level concentration analytics
+- Added account HHI calculation
+- Added persisted asset-type concentration analytics
+- Added asset-type HHI calculation
+- Added consolidated concentration summary
+- Added explicit analytics scope and availability boundaries
+- Added tests/test_portfolio_analytics_service.py
+- Integrated concentration analytics into the Dashboard
+- Added security-concentration presentation
+- Added account-concentration presentation
+- Added portfolio-health concentration summary metrics
+
+### Live Analytics Verification
+
+Verified against:
+
+data/pmph_portfolio.db
+
+Verified security concentration:
+
+- SMALLCAP: approximately 53.48 percent
+- MIDCAP: approximately 30.16 percent
+- GOLDBEES: approximately 11.63 percent
+- HDFCSML250: approximately 4.73 percent
+- Largest security position: approximately 53.48 percent
+- Top-3 security concentration: approximately 95.27 percent
+- Security HHI: approximately 0.392727
+- Effective security positions: approximately 2.55
+
+Verified account concentration:
+
+- Anita / Zerodha: approximately 88.37 percent
+- Jaideep / ProStocks: approximately 11.63 percent
+- Largest account concentration: approximately 88.37 percent
+- Account HHI: approximately 0.794518
+
+Verified persisted asset-type metadata:
+
+- Asset types represented: 1
+- ETF: 100 percent
+- Asset-type HHI: 1.0
+
+### Analytics Architecture Boundary
+
+Sprint 0.9.1 measures concentration of persisted portfolio wrapper positions,
+accounts, and persisted asset-type metadata.
+
+The effective security-position metric must not be interpreted as the number
+of underlying securities held inside ETFs or mutual funds.
+
+Underlying ETF and mutual-fund diversification is not yet available.
+
+Fund/ETF underlying-holding overlap analysis is not yet available.
+
+Sector-level and underlying-security diversification must remain deferred
+until the required instrument-intelligence and underlying-holdings
+architecture is available.
+
+The analytics service therefore exposes explicit scope and availability
+boundaries rather than inferring unsupported diversification conclusions.
+
+### Verification
+
+PASS:
+
+- Empty portfolio behavior
+- Security ranking
+- Security weights
+- Top concentration
+- Security HHI
+- Effective security positions
+- Security analytics scope
+- Account concentration
+- Asset-type concentration
+- Analytics availability boundaries
+- Portfolio Analytics Service isolated test
+- Dashboard UI render smoke test
+- Live Dashboard visual verification
+
+No regression detected in the existing dashboard and portfolio read foundation.
+
+---
 ## Exact Continuation Point
 
 Completed Sprint:
