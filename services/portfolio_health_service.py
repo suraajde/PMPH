@@ -4,6 +4,9 @@ from services.portfolio_analytics_service import (
 from services.portfolio_health_classification_service import (
     PortfolioHealthClassificationService,
 )
+from services.portfolio_health_severity_service import (
+    PortfolioHealthSeverityService,
+)
 
 
 class PortfolioHealthService:
@@ -40,6 +43,10 @@ class PortfolioHealthService:
 
         self.classification_service = (
             PortfolioHealthClassificationService()
+        )
+
+        self.severity_service = (
+            PortfolioHealthSeverityService()
         )
 
     def get_health_diagnostics(self):
@@ -88,6 +95,15 @@ class PortfolioHealthService:
             self.classification_service
             .classify_observations(
                 observations
+            )
+        )
+
+        severity_result = (
+            self.severity_service
+            .classify_severity(
+                classification_result[
+                    "classifications"
+                ]
             )
         )
 
@@ -145,6 +161,31 @@ class PortfolioHealthService:
             "severity_classification": (
                 classification_result[
                     "severity_classification"
+                ]
+            ),
+            "severity_classifications": (
+                severity_result[
+                    "severity_classifications"
+                ]
+            ),
+            "severity_classification_count": (
+                severity_result[
+                    "severity_classification_count"
+                ]
+            ),
+            "severity_status": (
+                severity_result[
+                    "severity_status"
+                ]
+            ),
+            "severity_scope": (
+                severity_result[
+                    "severity_scope"
+                ]
+            ),
+            "severity_rule_status": (
+                severity_result[
+                    "severity_rule_status"
                 ]
             ),
             "concentration_metrics": {

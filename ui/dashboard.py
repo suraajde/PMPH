@@ -847,6 +847,107 @@ def show():
         "Severity Classification: Not Defined"
     )
 
+    # =====================================================
+    # DIAGNOSTIC SEVERITY ELIGIBILITY
+    # =====================================================
+
+    st.markdown(
+        "**Diagnostic Severity Eligibility**"
+    )
+
+    st.caption(
+        "Severity evaluation is a separate layer from factual "
+        "observations and descriptive classifications. PMPH only "
+        "permits severity classification when sufficient context "
+        "and an explicit deterministic rule are available."
+    )
+
+    severity_columns = st.columns(
+        3
+    )
+
+    severity_columns[0].metric(
+        "Severity Status",
+        (
+            "Eligibility Gated"
+            if health_diagnostics[
+                "severity_status"
+            ] == "ELIGIBILITY_GATED"
+            else health_diagnostics[
+                "severity_status"
+            ]
+        ),
+    )
+
+    severity_columns[1].metric(
+        "Eligible Severity Outputs",
+        health_diagnostics[
+            "severity_classification_count"
+        ],
+    )
+
+    severity_columns[2].metric(
+        "Severity Rule Status",
+        (
+            "No Eligible Rules"
+            if health_diagnostics[
+                "severity_rule_status"
+            ] == "NO_ELIGIBLE_RULES"
+            else health_diagnostics[
+                "severity_rule_status"
+            ]
+        ),
+    )
+
+    if not health_diagnostics[
+        "severity_classifications"
+    ]:
+
+        st.info(
+            "No diagnostic severity classifications are currently "
+            "produced. Current concentration observations cannot "
+            "safely be converted into severity labels using position "
+            "weights alone. Instrument intelligence, underlying ETF "
+            "and mutual-fund exposure, and appropriate risk semantics "
+            "must be available before applicable severity rules can "
+            "be enabled."
+        )
+
+    else:
+
+        severity_rows = []
+
+        for severity in health_diagnostics[
+            "severity_classifications"
+        ]:
+
+            severity_rows.append(
+                severity
+            )
+
+        st.dataframe(
+            severity_rows,
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    st.warning(
+        "Severity Boundary: Eligibility-gated diagnostics do not "
+        "represent complete-portfolio health conclusions. PMPH does "
+        "not currently assign LOW, MEDIUM, or HIGH severity, does "
+        "not produce a portfolio-health score, and does not convert "
+        "diagnostic observations into forced rebalance actions."
+    )
+
+    st.caption(
+        "Future allocation and rebalance guidance must remain "
+        "advisory and investor-profile aware. A portfolio may "
+        "intentionally follow an aggressive allocation. Suggested "
+        "allocation changes or fund switches must therefore be "
+        "presented as optional decisions with supporting reasons, "
+        "not mandatory portfolio actions."
+    )
+
     st.info(
         "Framework Boundary: PMPH currently provides factual "
         "diagnostic observations only. Portfolio health scoring, "

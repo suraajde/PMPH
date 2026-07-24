@@ -349,25 +349,73 @@ Objectives completed:
 - Continue building incrementally toward a future portfolio-health scoring architecture
 
 ---
+## Sprint 0.9.5 - Portfolio Health Diagnostic Severity Foundation
+
+Status: COMPLETED
+
+Objectives completed:
+
+- Established PortfolioHealthSeverityService as a separate severity layer
+- Preserved separation between factual observations, descriptive classifications, and severity classifications
+- Added an explicit severity-rule registry for supported diagnostic candidates
+- Added deterministic severity eligibility gating
+- Added explicit rule, eligibility, data-requirement, limitation, scope, and provenance metadata
+- Deferred severity where instrument intelligence or underlying exposure context is insufficient
+- Deferred account-concentration severity until explicit account-risk semantics exist
+- Prevented position weight alone from producing premature severity conclusions
+- Integrated the severity contract into PortfolioHealthService
+- Preserved severity classification output as empty when no rule is eligible
+- Preserved portfolio completeness as NOT_CONFIRMED
+- Preserved health score as NOT_AVAILABLE
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Added dedicated severity service and integration tests
+- Added Diagnostic Severity Eligibility presentation to the Dashboard
+- Added explicit eligibility-gated and no-eligible-rules presentation
+- Added explicit no-forced-rebalance architecture boundary
+- Established that future allocation, fund-switch, SIP-redirection, and rebalance guidance must remain advisory and investor-profile aware
+- Preserved the ability for an investor to intentionally choose an aggressive portfolio allocation
+
+Important architecture boundary:
+
+Sprint 0.9.5 does not assign LOW, MEDIUM, or HIGH severity merely from
+persisted position weights.
+
+Severity is permitted only where sufficient context and an explicit,
+deterministic, tested rule exist.
+
+Instrument intelligence, underlying ETF and mutual-fund exposure, and
+appropriate risk semantics must exist before applicable severity rules are
+enabled.
+
+Future portfolio allocation, fund-switch, SIP-redirection, replacement, and
+rebalance guidance must be decision support rather than forced action.
+
+Investor risk profile and intentional portfolio style must be respected. An
+investor may intentionally maintain an aggressive allocation. PMPH may explain
+risks, alternatives, trade-offs, and possible switches, but future actions
+must be presented as optional decisions with supporting reasons.
+
+---
+
 ## Next Sprint
 
-### Sprint 0.9.5 - Portfolio Health Diagnostic Severity Foundation
+### Sprint 0.9.6 - Portfolio Health Context Requirements Foundation
 
 Status: PLANNED
 
 Planned objectives:
 
-- Extend deterministic diagnostic classifications with an explicit severity-classification layer
-- Keep factual observations, descriptive classifications, and severity classifications separate
-- Define deterministic severity rules only where supported by explicit persisted-data evidence
-- Preserve classification scope and provenance
-- Preserve imported-persisted-holdings scope
-- Preserve portfolio completeness as NOT_CONFIRMED
-- Avoid complete-portfolio health conclusions
-- Avoid premature portfolio-health scoring
-- Avoid target-allocation, rebalance, or investment recommendations
-- Preserve underlying ETF/fund diversification and overlap boundaries
-- Keep market-dependent risk and performance analytics deferred until the required architecture and data exist
+- Define the context required before diagnostic severity rules may become eligible
+- Formalize instrument-intelligence requirements for direct securities, ETFs, mutual funds, and other supported instruments
+- Formalize underlying-exposure requirements for ETF and mutual-fund diagnostics
+- Define risk-semantics requirements for security, account, and asset-type severity
+- Preserve explicit eligibility gating when required context is unavailable
+- Avoid inventing arbitrary LOW, MEDIUM, or HIGH thresholds before supporting data and semantics exist
+- Preserve imported-persisted-holdings scope and portfolio completeness as NOT_CONFIRMED
+- Preserve separation between diagnostics, severity, health scoring, target allocation, and recommendations
+- Prepare a clean architectural handoff into Phase 0.10.x Market Data and Instrument Intelligence
+- Preserve advisory, investor-profile-aware future allocation and rebalance decision support
 
 ---
 ## Planned Roadmap Toward v1.0

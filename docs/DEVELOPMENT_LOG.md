@@ -816,11 +816,127 @@ foundation.
 
 ---
 
+## Sprint 0.9.5 - Portfolio Health Diagnostic Severity Foundation
+
+Status: COMPLETED
+
+### Implementation
+
+- Added services/portfolio_health_severity_service.py
+- Established a separate deterministic diagnostic-severity architecture
+- Preserved factual observations as a separate layer
+- Preserved descriptive classifications as a separate layer
+- Added a severity-rule registry for supported diagnostic candidates
+- Added explicit severity eligibility gating
+- Added rule-status and eligibility-status metadata
+- Added data-requirement metadata
+- Added explicit limitation descriptions
+- Added severity scope IMPORTED_PERSISTED_HOLDINGS
+- Added severity-rule provenance
+- Deferred largest-security severity pending instrument intelligence
+- Deferred Top-3 security severity pending instrument and underlying-exposure context
+- Deferred account-allocation severity pending an explicit account-risk model
+- Deferred asset-type severity pending underlying-exposure modeling
+- Prevented position-weight-only severity classification
+- Integrated PortfolioHealthSeverityService into PortfolioHealthService
+- Added severity_classifications output
+- Added severity_classification_count output
+- Added severity_status output
+- Added severity_scope output
+- Added severity_rule_status output
+- Preserved legacy severity_classification as NOT_DEFINED
+- Preserved portfolio completeness as NOT_CONFIRMED
+- Preserved health score as NOT_AVAILABLE
+- Preserved target allocation as NOT_DEFINED
+- Preserved recommendation status as NOT_PROVIDED
+- Added tests/test_portfolio_health_severity_service.py
+- Added tests/test_portfolio_health_severity_integration.py
+- Added Diagnostic Severity Eligibility presentation to the Dashboard
+- Added Severity Status presentation
+- Added Eligible Severity Outputs presentation
+- Added Severity Rule Status presentation
+- Added explicit no-premature-severity explanation
+- Added explicit no-forced-rebalance boundary
+- Added advisory and investor-profile-aware future guidance principle
+
+### Critical Architecture Boundary
+
+Sprint 0.9.5 establishes severity eligibility architecture without inventing
+unsupported severity conclusions.
+
+Current concentration observations cannot safely be converted into LOW,
+MEDIUM, or HIGH severity labels using position weights alone.
+
+Instrument intelligence, underlying ETF and mutual-fund exposure, and
+appropriate risk semantics are required before applicable severity rules may
+be enabled.
+
+Portfolio completeness remains NOT_CONFIRMED.
+
+Health scoring remains NOT_AVAILABLE.
+
+Target allocation remains NOT_DEFINED.
+
+Investment recommendations remain NOT_PROVIDED.
+
+No forced rebalance action is produced.
+
+Future allocation, fund-switch, SIP-redirection, replacement, and rebalance
+guidance must remain advisory and investor-profile aware.
+
+An investor may intentionally choose an aggressive portfolio allocation.
+PMPH may identify risks, explain trade-offs, suggest alternatives, and present
+possible switches or allocation changes, but such guidance must remain
+optional decision support with supporting reasons rather than mandatory
+portfolio action.
+
+### Verification
+
+PASS:
+
+- Empty severity contract
+- Empty severity count
+- Severity eligibility gate
+- No eligible severity rules
+- Severity rule registry
+- Eligible severity rule count
+- Registered severity candidates
+- Explicit rule limitations
+- Severity scope and provenance
+- Instrument-intelligence requirement boundary
+- Underlying-exposure requirement boundary
+- Account-risk-semantics requirement boundary
+- No premature severity output
+- Imported portfolio scope
+- Portfolio completeness boundary
+- Health-score boundary
+- Target-allocation boundary
+- Recommendation boundary
+- Severity integration into PortfolioHealthService
+- Observation/classification/severity separation
+- Sprint 0.9.5 Severity Integration test
+- Sprint 0.9.5 Severity Service test
+- Sprint 0.9.4 Classification Integration regression
+- Sprint 0.9.3 Portfolio Health regression
+- Dashboard UI render smoke test
+- Live Dashboard visual verification
+- Diagnostic Severity Eligibility presentation
+- Eligibility Gated presentation
+- No Eligible Rules presentation
+- No-forced-rebalance boundary presentation
+- Advisory and investor-profile-aware guidance presentation
+
+No regression detected in the existing portfolio-health framework,
+classification architecture, allocation diagnostics, persisted portfolio
+analytics, Dashboard, or portfolio-read foundation.
+
+---
+
 ## Exact Continuation Point
 
 Completed Sprint:
 
-0.9.4 - Portfolio Health Diagnostic Classification Foundation
+0.9.5 - Portfolio Health Diagnostic Severity Foundation
 
 Current Phase:
 
@@ -828,25 +944,31 @@ Phase 0.9.x - Portfolio Health and Analytics Foundation
 
 Next Sprint:
 
-0.9.5 - Portfolio Health Diagnostic Severity Foundation
+0.9.6 - Portfolio Health Context Requirements Foundation
 
 Primary objective:
 
-Extend the diagnostic-classification architecture with deterministic severity
-classification while preserving the separation between factual observations,
-descriptive classifications, severity classifications, future health scoring,
-and investment recommendations.
+Define and formalize the context requirements that must be satisfied before
+diagnostic severity rules may become eligible.
 
-Sprint 0.9.5 must define severity only where explicit deterministic rules and
-supported persisted data justify it.
+Sprint 0.9.6 should define instrument-intelligence, underlying-exposure, and
+risk-semantics requirements without inventing unsupported severity thresholds.
 
-Severity must remain scoped to imported and persisted holdings while portfolio
-completeness remains NOT_CONFIRMED.
+It should prepare a clean architectural handoff into Phase 0.10.x Market Data
+and Instrument Intelligence while preserving explicit eligibility gating.
 
-Sprint 0.9.5 must not introduce complete-portfolio health conclusions, target
-allocation, rebalance recommendations, underlying ETF/fund diversification,
-fund overlap conclusions, or market-dependent risk and performance analytics
-without the required supporting architecture and data.
+Portfolio completeness remains NOT_CONFIRMED.
+
+Health scoring remains NOT_AVAILABLE.
+
+Target allocation remains NOT_DEFINED.
+
+Investment recommendations remain NOT_PROVIDED.
+
+Future allocation and rebalance intelligence must remain advisory and
+investor-profile aware. PMPH must support intentional aggressive allocation
+profiles and must not convert suggested allocation changes, fund switches,
+SIP redirections, replacements, or rebalancing into forced actions.
 
 ---
 
