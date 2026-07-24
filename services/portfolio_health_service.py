@@ -4,6 +4,9 @@ from services.portfolio_analytics_service import (
 from services.portfolio_health_classification_service import (
     PortfolioHealthClassificationService,
 )
+from services.portfolio_health_context_requirements_service import (
+    PortfolioHealthContextRequirementsService,
+)
 from services.portfolio_health_severity_service import (
     PortfolioHealthSeverityService,
 )
@@ -43,6 +46,10 @@ class PortfolioHealthService:
 
         self.classification_service = (
             PortfolioHealthClassificationService()
+        )
+
+        self.context_requirements_service = (
+            PortfolioHealthContextRequirementsService()
         )
 
         self.severity_service = (
@@ -95,6 +102,23 @@ class PortfolioHealthService:
             self.classification_service
             .classify_observations(
                 observations
+            )
+        )
+
+        context_registry = (
+            self.context_requirements_service
+            .get_requirement_registry()
+        )
+
+        context_availability = (
+            self.context_requirements_service
+            .evaluate_context_availability()
+        )
+
+        context_eligibility = (
+            self.severity_service
+            .evaluate_rule_context_eligibility(
+                context_availability
             )
         )
 
@@ -156,6 +180,56 @@ class PortfolioHealthService:
             "classification_scope": (
                 classification_result[
                     "classification_scope"
+                ]
+            ),
+            "context_requirements": (
+                context_availability[
+                    "evaluations"
+                ]
+            ),
+            "context_requirement_count": (
+                context_availability[
+                    "requirement_count"
+                ]
+            ),
+            "available_context_requirement_count": (
+                context_availability[
+                    "available_requirement_count"
+                ]
+            ),
+            "context_registry_status": (
+                context_registry[
+                    "registry_status"
+                ]
+            ),
+            "context_scope": (
+                context_registry[
+                    "context_scope"
+                ]
+            ),
+            "context_rule_evaluations": (
+                context_eligibility[
+                    "rule_evaluations"
+                ]
+            ),
+            "context_eligible_rule_count": (
+                context_eligibility[
+                    "context_eligible_rule_count"
+                ]
+            ),
+            "context_ineligible_rule_count": (
+                context_eligibility[
+                    "context_ineligible_rule_count"
+                ]
+            ),
+            "context_eligibility_status": (
+                context_eligibility[
+                    "eligibility_status"
+                ]
+            ),
+            "severity_output_eligible_rule_count": (
+                context_eligibility[
+                    "severity_output_eligible_rule_count"
                 ]
             ),
             "severity_classification": (

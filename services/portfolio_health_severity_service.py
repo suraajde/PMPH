@@ -205,6 +205,172 @@ class PortfolioHealthSeverityService:
             ),
         }
 
+    def evaluate_rule_context_eligibility(
+        self,
+        context_availability,
+    ):
+        """
+        Evaluate severity-rule context eligibility from an explicit
+        context-availability contract.
+
+        Context sufficiency may remove a data-sufficiency blocker,
+        but it does not define or execute a severity rule.
+
+        A context-eligible rule therefore remains DEFERRED until an
+        explicit deterministic severity rule is separately defined
+        and tested.
+        """
+
+        evaluations = (
+            context_availability.get(
+                "evaluations",
+                [],
+            )
+            if context_availability
+            else []
+        )
+
+        availability_map = {
+            evaluation[
+                "data_requirement_status"
+            ]: evaluation
+            for evaluation in evaluations
+        }
+
+        rule_evaluations = []
+
+        for observation_code, rule in (
+            self.RULE_REGISTRY.items()
+        ):
+
+            data_requirement_status = (
+                rule[
+                    "data_requirement_status"
+                ]
+            )
+
+            context_evaluation = (
+                availability_map.get(
+                    data_requirement_status
+                )
+            )
+
+            context_available = (
+                context_evaluation is not None
+                and context_evaluation[
+                    "requirement_available"
+                ] is True
+            )
+
+            rule_evaluations.append(
+                {
+                    "observation_code": (
+                        observation_code
+                    ),
+                    "rule_id": (
+                        rule[
+                            "rule_id"
+                        ]
+                    ),
+                    "classification": (
+                        rule[
+                            "classification"
+                        ]
+                    ),
+                    "dimension": (
+                        rule[
+                            "dimension"
+                        ]
+                    ),
+                    "data_requirement_status": (
+                        data_requirement_status
+                    ),
+                    "context_available": (
+                        context_available
+                    ),
+                    "context_eligibility_status": (
+                        "CONTEXT_ELIGIBLE"
+                        if context_available
+                        else "CONTEXT_INELIGIBLE"
+                    ),
+                    "severity_rule_status": (
+                        "DEFERRED"
+                    ),
+                    "severity_rule_defined": (
+                        False
+                    ),
+                    "severity_output_eligible": (
+                        False
+                    ),
+                    "severity_scope": (
+                        self.CLASSIFICATION_SCOPE
+                    ),
+                    "provenance": (
+                        "SEVERITY_CONTEXT_"
+                        "ELIGIBILITY_EVALUATION"
+                    ),
+                }
+            )
+
+        context_eligible_rule_count = sum(
+            1
+            for evaluation
+            in rule_evaluations
+            if evaluation[
+                "context_available"
+            ]
+        )
+
+        return {
+            "rule_evaluations": (
+                rule_evaluations
+            ),
+            "rule_count": len(
+                rule_evaluations
+            ),
+            "context_eligible_rule_count": (
+                context_eligible_rule_count
+            ),
+            "context_ineligible_rule_count": (
+                len(
+                    rule_evaluations
+                )
+                - context_eligible_rule_count
+            ),
+            "severity_output_eligible_rule_count": (
+                0
+            ),
+            "eligibility_status": (
+                "CONTEXT_REQUIREMENTS_SATISFIED"
+                if (
+                    rule_evaluations
+                    and context_eligible_rule_count
+                    == len(
+                        rule_evaluations
+                    )
+                )
+                else "CONTEXT_REQUIREMENTS_INCOMPLETE"
+            ),
+            "severity_rule_status": (
+                "RULES_NOT_DEFINED"
+            ),
+            "severity_scope": (
+                self.CLASSIFICATION_SCOPE
+            ),
+            "portfolio_completeness": (
+                "NOT_CONFIRMED"
+            ),
+            "health_score": (
+                "NOT_AVAILABLE"
+            ),
+            "target_allocation": (
+                "NOT_DEFINED"
+            ),
+            "recommendation_status": (
+                "NOT_PROVIDED"
+            ),
+        }
+
     def classify_severity(
         self,
         classifications,
