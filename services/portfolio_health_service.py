@@ -7,6 +7,12 @@ from services.portfolio_health_classification_service import (
 from services.portfolio_health_context_requirements_service import (
     PortfolioHealthContextRequirementsService,
 )
+from services.holdings_database import (
+    HoldingsDatabase,
+)
+from services.portfolio_health_instrument_intelligence_service import (
+    PortfolioHealthInstrumentIntelligenceService,
+)
 from services.portfolio_health_severity_service import (
     PortfolioHealthSeverityService,
 )
@@ -50,6 +56,16 @@ class PortfolioHealthService:
 
         self.context_requirements_service = (
             PortfolioHealthContextRequirementsService()
+        )
+
+        self.holdings_database = (
+            HoldingsDatabase(
+                database_path=database_path,
+            )
+        )
+
+        self.instrument_intelligence_service = (
+            PortfolioHealthInstrumentIntelligenceService()
         )
 
         self.severity_service = (
@@ -110,9 +126,25 @@ class PortfolioHealthService:
             .get_requirement_registry()
         )
 
+        persisted_holdings = (
+            self.holdings_database
+            .list_holdings()
+        )
+
+        instrument_intelligence = (
+            self.instrument_intelligence_service
+            .evaluate_portfolio_instruments(
+                persisted_holdings
+            )
+        )
+
         context_availability = (
             self.context_requirements_service
-            .evaluate_context_availability()
+            .evaluate_context_availability(
+                instrument_intelligence[
+                    "available_capabilities"
+                ]
+            )
         )
 
         context_eligibility = (
